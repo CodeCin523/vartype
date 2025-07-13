@@ -24,6 +24,13 @@ add_library(
 )
 set_property(TARGET ${VRT_NAME} PROPERTY LINKER_LANGUAGE C)
 target_include_directories(
-    ${VRT_NAME} PRIVATE
-    include/vartype/
+    ${VRT_NAME}
+    PRIVATE src
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
+
+
+if(DEFINED VRT_TEST)
+    add_subdirectory(test)
+endif()

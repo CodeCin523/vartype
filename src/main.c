@@ -1,5 +1,5 @@
-#include <var.h>
-#include <strerror.h>
+#include <vartype/var.h>
+#include <vartype/strerror.h>
 
 #include <stddef.h>
 

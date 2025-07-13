@@ -12,6 +12,7 @@
 ## Table of Contents
 
 - [Installation](#installation)
+- [Including in Your Project](#including-in-your-project)
 - [Usage](#usage)
 - [API Reference](#api-reference)
 - [License](#License)
@@ -27,30 +28,49 @@ To build and install the `vartype` library, follow these steps:
    cd vartype
    ```
 
-2. Create a build directory and navigate into it:
+2. Run CMake to configure the project. If you want to generate the test    executable, use the -DVRT_TEST=ON option:
 
    ```bash
-   mkdir build
-   cd build
+   cmake -S . -B _build -DVRT_TEST=ON
    ```
 
-3. Run CMake to configure the project:
+3. Go in the newly created directory, build the library and the test executable if specified:
 
    ```bash
-   cmake ..
-   ```
-
-4. Build the library:
-
-   ```bash
+   cd _build
    make
    ```
 
-5. Optionally, install the library:
+   Alternatively, if you are using msbuild, you can compile the project with:
+
+   ```bash
+   cd _build
+   msbuild vartype.sln
+   ```
+
+4. Optionally, install the library:
 
    ```bash
    sudo make install
    ```
+
+## Including in Your Project
+
+If you want to include the `vartype` library in your own CMake project, you can do so by using `add_subdirectory` and linking against `${VRT_NAME}`. Here’s a simple example:
+
+1. In your project's `CMakeLists.txt`, add the following lines:
+
+   ```cmake
+   add_subdirectory(path/to/vartype)  # Adjust the path to where the vartype library is located
+   ```
+
+2. Link against the `vartype` library in your target:
+
+   ```cmake
+   target_link_libraries(your_target PRIVATE ${VRT_NAME})
+   ```
+
+This will allow you to use the vartype library in your project without needing to manually manage its source files.
 
 ## Usage
 
