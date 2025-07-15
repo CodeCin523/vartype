@@ -20,7 +20,8 @@ project(
 
 add_library(
     ${VRT_NAME} STATIC
-    src/main.c
+    src/var.c
+    src/mem.c
 )
 set_property(TARGET ${VRT_NAME} PROPERTY LINKER_LANGUAGE C)
 target_include_directories(
@@ -31,6 +32,6 @@ target_include_directories(
 )
 
 
-if(DEFINED VRT_TEST)
+if(DEFINED VRT_TEST AND VRT_TEST STREQUAL "ON")
     add_subdirectory(test)
 endif()

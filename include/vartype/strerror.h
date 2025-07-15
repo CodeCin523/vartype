@@ -6,7 +6,7 @@ extern "C" {
 
 #include "var.h"
 
-const char *VtStrError(vtResult _r);
+const char *const VtStrError(vtResult _r);
 
 #ifdef __cplusplus
 };

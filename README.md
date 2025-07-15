@@ -1,21 +1,15 @@
 # vartype
 
-`vartype` is a C library designed for managing variable types and memory pages efficiently. It provides a simple API for registering and comparing variables, as well as getting and setting their values. This library is particularly useful in systems programming and embedded applications where memory management is critical.
+`vartype` is a lightweight memory allocator library that allows you to access variables from anywhere in your application, as long as you have the correct name and page. This library is designed to simplify variable management in complex systems, enabling efficient memory usage and easy variable retrieval.
+
+**Note:** The current implementation of `vartype` is more of a proof of concept than a fully optimized solution. It may not perform as well as other approaches and is intended primarily for educational purposes and experimentation.
 
 ## Features
 
-- Define and manage variable types with different sizes.
-- Register and compare memory pages.
-- Get and set variable values easily.
-- Lightweight and efficient design.
-
-## Table of Contents
-
-- [Installation](#installation)
-- [Including in Your Project](#including-in-your-project)
-- [Usage](#usage)
-- [API Reference](#api-reference)
-- [License](#License)
+- Register and manage variables across different pages.
+- Access variables using their names and associated pages.
+- Retrieve parent and child relationships between pages and variables.
+- Flexible and easy-to-use API.
 
 ## Installation
 
@@ -28,7 +22,7 @@ To build and install the `vartype` library, follow these steps:
    cd vartype
    ```
 
-2. Run CMake to configure the project. If you want to generate the test    executable, use the -DVRT_TEST=ON option:
+2. Run CMake to configure the project. If you want to generate the test executable, use the `-DVRT_TEST=ON` option:
 
    ```bash
    cmake -S . -B _build -DVRT_TEST=ON
@@ -48,12 +42,6 @@ To build and install the `vartype` library, follow these steps:
    msbuild vartype.sln
    ```
 
-4. Optionally, install the library:
-
-   ```bash
-   sudo make install
-   ```
-
 ## Including in Your Project
 
 If you want to include the `vartype` library in your own CMake project, you can do so by using `add_subdirectory` and linking against `${VRT_NAME}`. Here’s a simple example:
@@ -70,59 +58,23 @@ If you want to include the `vartype` library in your own CMake project, you can 
    target_link_libraries(your_target PRIVATE ${VRT_NAME})
    ```
 
-This will allow you to use the vartype library in your project without needing to manually manage its source files.
-
-## Usage
-
-To use the `vartype` library in your project, include the header file and link against the library. Below is a simple example demonstrating how to initialize the library, register a variable, and set its value.
-
-### Example
-
-```c
-#include "vartype.h"
-
-int main() {
-    // Initialize the library
-    VtInit(1024, 512);
-
-    vtVar_t myVar;
-    vtPage_t myPage;
-
-    // Register a memory page
-    VtRegisterPage("MyPage", 0, &myPage);
-
-    // Register a variable
-    VtRegisterVar("MyVariable", myPage, &myVar);
-
-    // Set a value to the variable
-    int value = 42;
-    VtVarSet(myVar, &value);
-
-    // Get the value from the variable
-    int *retrievedValue = (int *)VtVarGet(myVar);
-    printf("Value: %d\n", *retrievedValue);
-
-    return 0;
-}
-```
+This will allow you to use the `vartype` library in your project without needing to manually manage its source files.
 
 ## API Reference
 
 ### Types
 
-- `vtPage_t`: Represents a memory page.
-- `vtType_t`: Represents the type of a variable (e.g., `VT_TYPE_b1`, `VT_TYPE_b32`, `VT_TYPE_b64`).
-- `vtVar_t`: Structure representing a variable.
+- `vtPage_t`: Represents a page identifier.
+- `vtVar_t`: Structure representing a variable with its address, page, and count.
 
 ### Functions
 
-- `vtResult VtInit(uint64_t defMem, uint64_t allocMem)`: Initializes the library with default and allocated memory sizes.
-- `vtResult VtRegisterPage(const char *_n, vtPage_t _p, vtPage_t *_r)`: Registers a memory page.
-- `vtResult VtRegisterVar(const char *_n, vtPage_t _p, vtVar_t *_r)`: Registers a variable.
-- `vtResult VtComparePage(vtPage_t _p1, vtPage_t _p2)`: Compares two memory pages.
-- `vtResult VtCompareVar(vtVar_t _v1, vtVar_t _v2)`: Compares two variables.
-- `void *VtVarGet(vtVar_t _v)`: Gets the value of a variable.
-- `void VtVarSet(vtVar_t _v, void *_d)`: Sets the value of a variable.
+- `vtResult VtInit(size_t size)`: Initializes the library with a specified size.
+- `vtResult VtRegisterPage(const vtPage_t _page, const char *const _name, vtPage_t *p)`: Registers a new page.
+- `vtResult VtRegisterVar(const vtPage_t _page, const char *const _name, const uint16_t uCount, vtVar_t *v)`: Registers a variable in a specified page.
+- `vtResult VtFindPage(const vtPage_t _page, const char *const _name, vtPage_t *p)`: Finds a registered page by name.
+- `vtResult VtFindVar(const vtPage_t _page, const char *const _name, vtVar_t *v)`: Finds a registered variable by name.
+- `vtResult VtGetData(const vtVar_t _var, void **data)`: Retrieves the data associated with a variable.
 
 ## License
 
