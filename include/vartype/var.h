@@ -20,8 +20,8 @@ typedef struct vtVar {
 } vtVar_t;
 
 typedef uint32_t vtResult;
-#define VT_RESULT_FAILED -1
-#define VT_RESULT_SUCCESS 0
+#define VT_RESULT_FAILED 0
+#define VT_RESULT_SUCCESS 1
 #define VT_RESULT_ERR_REGISTERED_IN_PARENT 1
 #define VT_RESULT_ERR_REGISTERED_LOCALLY 2
 #define VT_RESULT_ERR_REGISTERED_IN_CHILD 3
