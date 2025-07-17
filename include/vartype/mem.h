@@ -9,8 +9,10 @@ extern "C" {
 
 
 struct vtAlloc{
-    uint8_t *_data;
-    uint8_t *offsets;
+    uint8_t *pData;
+    uint8_t *pOffset;
+    uint64_t dataSize;
+
     uint16_t offsetLCount;
     uint16_t offsetPCount;
 };
