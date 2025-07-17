@@ -1,0 +1,10 @@
+#ifndef __SET_H__
+#define __SET_H__
+
+
+#define SET_STR_COMPARE ${VRT_SETTING_STR_COMPARE}
+#define SET_SIMB ${VRT_SETTING_SIMD}
+#define SET_OPTIMIZER ${VRT_SETTING_OPTIMIZER}
+
+
+#endif

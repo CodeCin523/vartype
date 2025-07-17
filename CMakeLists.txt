@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.10)
 
 
+# ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
+# STATIC VARIABLES
+# ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 set(VRT_NAME vartype)
 set(VRT_VERSION_MAJOR 1)
 set(VRT_VERSION_MINOR 0)
@@ -12,6 +15,20 @@ set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_STANDARD_REQUIRED ON)
 
 
+# ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
+# SETTINGS
+# ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
+set(VRT_SETTING_STR_COMPARE addr)
+set(VRT_SETTING_STR_COMPARE char)
+set(VRT_SETTING_SIMD OFF)
+set(VRT_SETTING_OPTIMIZER OFF)
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/set.cmake.h ${CMAKE_CURRENT_SOURCE_DIR}/src/set.h)
+
+
+# ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
+# BUILDING
+# ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 project(
     ${VRT_NAME}
     VERSION ${VRT_VERSION_MAJOR}.${VRT_VERSION_MINOR}.${VRT_VERSION_PATCH}
@@ -32,6 +49,9 @@ target_include_directories(
 )
 
 
+# ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
+# TEST
+# ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 if(DEFINED VRT_TEST AND VRT_TEST STREQUAL "ON")
     add_subdirectory(test)
 endif()

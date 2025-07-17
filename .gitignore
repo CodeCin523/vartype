@@ -1,5 +1,8 @@
 _build/
 .cache/
 .vscode/
+
+src/set.h
+
 compile_commands.json
 todo.md
