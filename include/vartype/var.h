@@ -28,6 +28,7 @@ typedef uint32_t vtResult;
 #define VT_RESULT_MEM_FAILED_MAP 4
 #define VT_RESULT_MEM_FAILED_CALLOC 5
 #define VT_RESULT_MEM_ADDR_NOT_FOUND 6
+#define VT_RESULT_ERR_NO_SPACE 7
 
 
 // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
