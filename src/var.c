@@ -10,9 +10,9 @@
 
 // here to facilitate future implementation
 int inline __attribute__((always_inline)) inl_strcmp(const char *a, const char *b) {
-#if SET_STR_COMPARE == char
+#if SET_STRCMP_CHAR == VRT_ON
     return strcmp(a,b);
-#elif SET_STR_COMPARE == addr
+#else
     int i = a - b;
     // there is probably better than this that exists, but for the moment, a state machine will work.
     return i == 0? 0 : i < 0? 1 : -1;
@@ -39,24 +39,36 @@ struct pagedt {
 
 static inline vtResult pagedt_FindName(
     struct pagedt *dt, const char *name, int *id) {
+#if SET_LOOKUP_BINTREE == VRT_ON
+    // BINTREE
+#else
     for(uint64_t i = 0; i < dt->nameLCount; ++i) {
         if(inl_strcmp(dt->ppName[i], name) != 0) continue;
         *id = i;
         return VT_RESULT_SUCCESS;
     }
+#endif
     return VT_RESULT_FAILED;
 }
 static inline vtResult pagedt_PushName(
     struct pagedt *dt, const char *name) {
+#if SET_LOOKUP_BINTREE == VRT_ON
+    // BINTREE
+#else
     if(dt->nameLCount == dt->namePCount) {
         // reallocate space and copy dt->name over
     }
     dt->ppName[dt->nameLCount++] = name;
     return VT_RESULT_SUCCESS;
+#endif
 }
-static inline vtResult pagedt_Pull(
+static inline vtResult pagedt_PullName(
     struct pagedt *dt, int i) {
-    // remove
+#if SET_LOOKUP_BINTREE == VRT_ON
+    // BINTREE
+#else
+    // copy everything greater than i to i
+#endif
 }
 
 

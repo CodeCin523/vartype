@@ -16,23 +16,42 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 
 
 # ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
-# SETTINGS v0.1
+# SETTINGS v1.0
 # ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
-set(VRT_SET_STRCMP_LIST "addr" "char")
-if(DEFINED VRT_SET_STRCMP)
+if(NOT DEFINED VRT_SETTING_STRCMP)
+    message("VRT_SETTING_STRCMP not defined.")
+    set(VRT_SET_STRCMP_CHAR         VRT_OFF)
+    set(VRT_SET_STRCMP_ADDR         VRT_ON)
 else()
-    set(VRT_SET_STRCMP 0)
+    if(VRT_SETTING_STRCMP STREQUAL "char")
+        set(VRT_SET_STRCMP_CHAR     VRT_ON)
+        set(VRT_SET_STRCMP_ADDR     VRT_OFF)
+    elseif(VRT_SETTING_STRCMP STREQUAL "addr")
+        set(VRT_SET_STRCMP_CHAR     VRT_OFF)
+        set(VRT_SET_STRCMP_ADDR     VRT_ON)
+    else()
+        message("VRT_SETTING_STRCMP invalid.")
+        set(VRT_SET_STRCMP_CHAR     VRT_OFF)
+        set(VRT_SET_STRCMP_ADDR     VRT_ON)
+    endif()
 endif()
-
-
-set(VRT_SET_LOOKUP_LIST "linear" "bintree")
-if(DEFINED VRT_SET_LOOKUP)
+if(NOT DEFINED VRT_SETTING_LOOKUP)
+    message("VRT_SETTING_LOOKUP not defined.")
+    set(VRT_SET_LOOKUP_BINTREE  VRT_OFF)
+    set(VRT_SET_LOOKUP_LINEAR   VRT_ON)
 else()
-    set(VRT_SET_LOOKUP 0)
+    if(VRT_SETTING_LOOKUP STREQUAL "bintree")
+        set(VRT_SET_LOOKUP_BINTREE  VRT_ON)
+        set(VRT_SET_LOOKUP_LINEAR   VRT_OFF)
+    elseif(VRT_SETTING_LOOKUP STREQUAL "linear")
+        set(VRT_SET_LOOKUP_BINTREE  VRT_OFF)
+        set(VRT_SET_LOOKUP_LINEAR   VRT_ON)
+    else()
+        message("VRT_SETTING_LOOKUP invalid.")
+        set(VRT_SET_LOOKUP_BINTREE  VRT_OFF)
+        set(VRT_SET_LOOKUP_LINEAR   VRT_ON)
+    endif()
 endif()
-
-# set(VRT_SETTING_SIMD OFF)
-# set(VRT_SETTING_OPTIMIZER OFF)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/set.cmake.h ${CMAKE_CURRENT_SOURCE_DIR}/src/set.h)
 
