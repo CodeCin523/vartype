@@ -13,5 +13,10 @@
 #define SET_LOOKUP_BINTREE  ${VRT_SET_LOOKUP_BINTREE}
 #define SET_LOOKUP_LINEAR   ${VRT_SET_LOOKUP_LINEAR}
 
+// if thread-safe
+#define SET_THREAD_SAFETY   ${VRT_SET_THREAD_SAFETY}
+// authorization to use calloc(), malloc(), and free() for a specific data type
+#define SET_CALLOC_USAGE    ${VRT_SET_CALLOC_USAGE}
+
 
 #endif

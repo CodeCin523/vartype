@@ -5,4 +5,5 @@ _build/
 src/set.h
 
 compile_commands.json
+README.test.md
 todo.md

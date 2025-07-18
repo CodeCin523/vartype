@@ -16,7 +16,7 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 
 
 # ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
-# SETTINGS v1.0
+# SETTINGS v1.1
 # ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 if(NOT DEFINED VRT_SETTING_STRCMP)
     message("VRT_SETTING_STRCMP not defined.")
@@ -51,6 +51,14 @@ else()
         set(VRT_SET_LOOKUP_BINTREE  VRT_OFF)
         set(VRT_SET_LOOKUP_LINEAR   VRT_ON)
     endif()
+endif()
+if(NOT DEFINED VRT_SETTING_THREAD_SAFETY)
+    message("VRT_SETTING_THREAD_SAFETY not defined.")
+    set(VRT_SET_THREAD_SAFETY VRT_OFF)
+endif()
+if(NOT DEFINED VRT_SETTING_CALLOC_USAGE)
+    message("VRT_SETTING_CALLOC_USAGE not defined.")
+    set(VRT_SET_CALLOC_USAGE VRT_ON)
 endif()
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/set.cmake.h ${CMAKE_CURRENT_SOURCE_DIR}/src/set.h)
