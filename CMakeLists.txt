@@ -16,12 +16,23 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 
 
 # ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
-# SETTINGS
+# SETTINGS v0.1
 # ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
-set(VRT_SETTING_STR_COMPARE addr)
-set(VRT_SETTING_STR_COMPARE char)
-set(VRT_SETTING_SIMD OFF)
-set(VRT_SETTING_OPTIMIZER OFF)
+set(VRT_SET_STRCMP_LIST "addr" "char")
+if(DEFINED VRT_SET_STRCMP)
+else()
+    set(VRT_SET_STRCMP 0)
+endif()
+
+
+set(VRT_SET_LOOKUP_LIST "linear" "bintree")
+if(DEFINED VRT_SET_LOOKUP)
+else()
+    set(VRT_SET_LOOKUP 0)
+endif()
+
+# set(VRT_SETTING_SIMD OFF)
+# set(VRT_SETTING_OPTIMIZER OFF)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/set.cmake.h ${CMAKE_CURRENT_SOURCE_DIR}/src/set.h)
 

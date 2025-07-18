@@ -5,6 +5,19 @@
 
 #include "set.h"
 
+#include <string.h>
+
+
+// here to facilitate future implementation
+int inline __attribute__((always_inline)) inl_strcmp(const char *a, const char *b) {
+#if SET_STR_COMPARE == char
+    return strcmp(a,b);
+#elif SET_STR_COMPARE == addr
+    int i = a - b;
+    // there is probably better than this that exists, but for the moment, a state machine will work.
+    return i == 0? 0 : i < 0? 1 : -1;
+#endif
+}
 
 // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 // DATA HANDLER
@@ -27,12 +40,9 @@ struct pagedt {
 static inline vtResult pagedt_FindName(
     struct pagedt *dt, const char *name, int *id) {
     for(uint64_t i = 0; i < dt->nameLCount; ++i) {
-#if SET_STR_COMPARE == addr
-        if(dt->ppName[i] != name) continue;
+        if(inl_strcmp(dt->ppName[i], name) != 0) continue;
         *id = i;
         return VT_RESULT_SUCCESS;
-#elif SET_STR_COMPARE == char
-#endif
     }
     return VT_RESULT_FAILED;
 }
@@ -45,7 +55,7 @@ static inline vtResult pagedt_PushName(
     return VT_RESULT_SUCCESS;
 }
 static inline vtResult pagedt_Pull(
-    int i) {
+    struct pagedt *dt, int i) {
     // remove
 }
 

@@ -2,9 +2,16 @@
 #define __SET_H__
 
 
-#define SET_STR_COMPARE ${VRT_SETTING_STR_COMPARE}
-#define SET_SIMB ${VRT_SETTING_SIMD}
-#define SET_OPTIMIZER ${VRT_SETTING_OPTIMIZER}
+#if ${VRT_SETTING_STR_COMPARE} == char
+#define SET_STRCMP_CHAR     ON
+#else // ${VRT_SETTING_STR_COMPARE} == addr
+#define SET_STRCMP_ADDR     ON
+#endif
 
+#if ${VRT_SETTING_LOOKUP} == bintree
+#define SET_LOOKUP_BINTREE  ON
+#else // ${VRT_SETTING_LOOKUP} == linear
+#define SET_LOOKUP_LINEAR   ON
+#endif
 
 #endif
