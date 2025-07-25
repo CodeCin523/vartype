@@ -3,6 +3,7 @@ _build/
 .vscode/
 
 src/set.h
+src/tmpl.c
 
 compile_commands.json
 README.test.md

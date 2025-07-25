@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include <vartype/var.h>
 #include <vartype/strerror.h>
 
@@ -46,6 +47,13 @@ struct pagedt {
     uint64_t nameLCount;
 };
 
+
+static inline vtResult pagedt_Init(
+    struct pagedt *dt
+) {
+    // NEED TO IMPLEMENT REAL ALLOCATION TECHNIQUE
+    dt->pData = (uint8_t*)1;
+}
 
 static inline vtResult pagedt_FindName(
     struct pagedt *dt,
@@ -151,16 +159,52 @@ static inline vtResult pagedt_PullName(
 // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 // INTERFACE
 // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
+#if SET_STRCMP_CHAR == VRT_ON
+#else
+#endif
+
+static struct pagedt *pPageData;
+static struct pageHierachy {
+    vtPage_t i;     // index
+    vtPage_t cc;    // child count
+} *pPageHierarchy;
+static vtPage_t pageHierarchyLCount;
+static vtPage_t pageHierarchyPCount;
+
+
 vtResult VtInit(
     
 ) {
-
+    return VT_RESULT_SUCCESS;
 }
 
 vtResult VtRegisterPage(
     const vtPage_t _page, const char *const _name,
     vtPage_t *p
 ) {
+    // if cannot add more
+    if(pageHierarchyLCount==pageHierarchyPCount)
+        return VT_RESULT_ERR_NO_SPACE;
+    // TODO : if page name already exist
+
+    // find parent
+    struct pageHierachy *pa = pPageHierarchy;
+    for(vtPage_t i = 0; i < pageHierarchyLCount; ++i) {
+        if(pPageHierarchy[i].i != _page) continue;
+        pa = &pPageHierarchy[i];
+        break;
+    }
+    // find place
+    for(vtPage_t i = 0; i < pageHierarchyPCount; ++i) {
+        if(pPageData[i].pData != NULL) continue;
+        *p = i;
+        break;
+    }
+    pagedt_Init(&pPageData[*p]);
+
+    
+
+    
     return VT_RESULT_SUCCESS;
 }
 vtResult VtRegisterVar(
