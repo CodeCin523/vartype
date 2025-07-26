@@ -30,6 +30,7 @@ typedef uint32_t vtResult;
 #define VT_RESULT_MEM_ADDR_NOT_FOUND        7
 #define VT_RESULT_ERR_NO_SPACE              8
 #define VT_RESULT_ERR_NO_REF                9
+#define VT_RESULT_ERR_NO_NAME               10
 
 
 // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
