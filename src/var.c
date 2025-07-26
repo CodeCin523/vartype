@@ -52,7 +52,7 @@ struct nameref {
     void *ref;
 };
 
-int nameref_comp(const void *a, const void *b) {
+static int nameref_comp(const void *a, const void *b) {
     struct nameref *na = (struct nameref *)a, *nb = (struct nameref *)b;
 
 #if SET_STRCMP_CHAR == VRT_ON
@@ -106,10 +106,9 @@ static inline vtResult namedt_Pull(
 #else
     // place last to i
     --dt->nameLCount;
-    dt->ppName      [id] = dt->ppName    [dt->nameLCount];
-    dt->ppNameRef   [id] = dt->ppNameRef [dt->nameLCount];
-    dt->ppName    [dt->nameLCount] = 0;
-    dt->ppNameRef [dt->nameLCount] = 0;
+    dt->pRef[id] = dt->pRef[dt->nameLCount];
+    dt->pRef[dt->nameLCount].n = 0;
+    dt->pRef[dt->nameLCount].ref = 0;
 #endif
 
     return VT_RESULT_SUCCESS;
@@ -147,7 +146,7 @@ static inline vtResult namedt_Find(
     }
 #else
     for(nameid_t i = 0; i < dt->nameLCount; ++i) {
-        if(nameref_comp((const void *)&dt->pRef[mid], (const void *)&new) != 0) continue;
+        if(nameref_comp((const void *)&dt->pRef[i], (const void *)&new) != 0) continue;
         *id = i;
         return VT_RESULT_SUCCESS;
     }
@@ -164,6 +163,8 @@ static inline vtResult namedt_Find(
 #if SET_STRCMP_CHAR == VRT_ON
 #else
 #endif
+
+static struct namedt pageNames;
 
 static struct pagedt *pPageData;
 static struct pageHierachy {
@@ -190,7 +191,9 @@ vtResult VtRegisterPage(
     // if cannot add more
     if(pageHierarchyLCount==pageHierarchyPCount)
         return VT_RESULT_ERR_NO_SPACE;
-    // TODO : if page name already exist
+    
+    if(namedt_Find(&pageNames, _name, NULL) != VT_RESULT_SUCCESS)
+        return VT_RESULT_ERR_REGISTERED_LOCALLY;
 
     // find parent
     struct pageHierachy *pa = pPageHierarchy;
