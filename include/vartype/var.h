@@ -20,15 +20,16 @@ typedef struct vtVar {
 } vtVar_t;
 
 typedef uint32_t vtResult;
-#define VT_RESULT_FAILED 0
-#define VT_RESULT_SUCCESS 1
-#define VT_RESULT_ERR_REGISTERED_IN_PARENT 1
-#define VT_RESULT_ERR_REGISTERED_LOCALLY 2
-#define VT_RESULT_ERR_REGISTERED_IN_CHILD 3
-#define VT_RESULT_MEM_FAILED_MAP 4
-#define VT_RESULT_MEM_FAILED_CALLOC 5
-#define VT_RESULT_MEM_ADDR_NOT_FOUND 6
-#define VT_RESULT_ERR_NO_SPACE 7
+#define VT_RESULT_FAILED                    0
+#define VT_RESULT_SUCCESS                   1
+#define VT_RESULT_ERR_REGISTERED_IN_PARENT  2
+#define VT_RESULT_ERR_REGISTERED_LOCALLY    3
+#define VT_RESULT_ERR_REGISTERED_IN_CHILD   4
+#define VT_RESULT_MEM_FAILED_MAP            5
+#define VT_RESULT_MEM_FAILED_CALLOC         6
+#define VT_RESULT_MEM_ADDR_NOT_FOUND        7
+#define VT_RESULT_ERR_NO_SPACE              8
+#define VT_RESULT_ERR_NO_REF                9
 
 
 // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
