@@ -1,53 +1,184 @@
-#include <stdint.h>
 #include <vartype/var.h>
 #include <vartype/strerror.h>
 
 #include "set.h"
 
+#include <stdlib.h>
+#include <string.h>
 
 
 // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
-// UTILS
+// MEMORY MANAGER
 // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
-#if defined(_MSC_VER)
-    #define FORCE_INLINE __forceinline
-#elif defined(__GNUC__)
-    #define FORCE_INLINE __attribute__((always_inline)) inline
-#else
-    #define FORCE_INLINE inline
-#endif
+static struct allocdt {
+    uint8_t *dataPool;
 
+    uint8_t *offsetPool;
 
-
-
-
-// // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
-// // DATA HANDLER
-// // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
-struct pagedt {
-    uint8_t *pData;
-    uint64_t dataSize;
-
-    uint8_t *pOffset;
-    uint64_t offsetPCount;
-    uint64_t offsetLCount;
+    uint16_t offsetLCount;
+    uint16_t offsetPCount;
+    uint8_t dataCount;
 };
 
-static inline vtResult pagedt_Init(struct pagedt *dt) {
+static inline uint8_t FIND_LEFTMOST_BIT(uint64_t x) {
+    if (x == 0) return 0; // or handle differently
+#ifdef __GNUC__
+    return 63 - __builtin_clzll(x); // 0-based indexing
+#else
+    /* Binary search approach*/
+    uint8_t pos = 0;
+    if (x & 0xFFFFFFFF00000000ULL) { x >>= 32; pos += 32; }
+    if (x & 0xFFFF0000ULL) { x >>= 16; pos += 16; }
+    if (x & 0xFF00U) { x >>= 8; pos += 8; }
+    if (x & 0xF0U) { x >>= 4; pos += 4; }
+    if (x & 0x0CU) { x >>= 2; pos += 2; }
+    if (x & 0x02U) { pos += 1; }
+    return pos; // 0-based
+    
+    /* Right-shift while loop (can be change to a for loop if needed)
+    int i = 0;
+    while(x != 0) {x >>= 1; ++i; }
+    return --i;
+    */
+#endif
+}
+
+static inline vtResult allocdt_offcCheck(
+    struct allocdt *dt
+) {
+    if(dt->offsetLCount >= dt->offsetPCount) {
+        dt->offsetPCount *= 2;
+        uint8_t *temp = NULL;
+#if SET_CALLOC_USAGE == VRT_ON
+        temp = calloc(dt->offsetPCount, sizeof(*dt->offsetPool));
+        if(temp == NULL)
+            return VT_RESULT_FAILED;
+        if(dt->offsetPool != NULL) {
+            memcpy(temp, dt->offsetPool, dt->offsetLCount);
+            free(dt->offsetPool);
+        }
+#else
+#endif
+        dt->offsetPool = temp;
+    }
     return VT_RESULT_SUCCESS;
+}
+static inline vtResult allocdt_offDivide(
+    struct allocdt *dt,
+    uint8_t *first
+) {
+    if(dt->offsetLCount >= dt->offsetPCount)
+        return VT_RESULT_ERR_NO_SPACE;
+
+    memcpy(
+        &first[1],
+        first,
+        dt->offsetLCount - (first - dt->offsetPool)
+    );
+    
+    uint8_t offset = *first - 1;
+    first[1] = offset;
+    *first   = offset;
+
+    ++dt->offsetLCount;
+    return VT_RESULT_SUCCESS;
+}
+static inline vtResult allocdt_offCombine(
+    struct allocdt *dt,
+    int i
+) {
+    // if(dt->dataPool[i] != dt-> dataPool[i+1])
+    //     return VT_RESULT_FAILED;
+    
+    memcpy(
+        &dt->offsetPool[i],
+        &dt->offsetPool[i+1],
+        dt->offsetLCount - i - 1
+    );
+
+
+    uint8_t offset = dt->offsetPool[i] + 1;
+    dt->offsetPool[i] = offset;
+
+    --dt->offsetLCount;
+    return VT_RESULT_SUCCESS;
+}
+
+static inline uint32_t allocdt_Alloc(
+    struct allocdt *dt,
+    size_t size
+) {
+    int offset = FIND_LEFTMOST_BIT(size) + 1;   // 1 gives 0, so corrected to give 1
+
+    // Find position in pool.
+    uint32_t ptr = 0;
+    int i = 0;
+    for(; i < dt->offsetLCount; ++i) {
+        uint32_t coff = dt->offsetPool[i] & 0b01111111;
+
+        if (!(dt->offsetPool[i] & 0b10000000)) {
+            if (coff == offset) {    // Perfect Size
+                break;
+            }
+            else if (coff > offset) {  // Too Big
+                // Divide until perfect size
+                while (coff != offset) {
+                    if (allocdt_offcCheck(dt) == VT_RESULT_FAILED)
+                        return UINT32_MAX;
+                    allocdt_offDivide(dt, &dt->offsetPool[i]);
+                    coff = dt->offsetPool[i];
+                }
+                break;
+            }
+        }
+        ptr += coff;
+    }
+    if(i==dt->offsetLCount)
+        return UINT32_MAX;
+    // LOCK the offset position.
+    dt->offsetPool[i] |= 0b10000000;
+    return ptr;
+}
+static inline vtResult allocdt_Free(
+    struct allocdt *dt,
+    uint32_t addr
+) {
+    uint32_t ptr = 0;
+    for(int i = 0; i < dt->offsetLCount; ++i) {
+        uint32_t coff = dt->offsetPool[i] & 0b01111111;
+
+        if(ptr != addr) {
+            ptr += 1 << coff;
+            continue;
+        }
+
+        /* // WRONG !!!!!
+        while(1) {
+            uint64_t coffValue = 1<<coff;
+            if((ptr - dt->dataPool) % coffValue == 0) { // RIGHT
+                if(dt->offsetPool[i] != dt->offsetPool[i+1]) break;
+                allocdt_Combine(dt, i);
+            } else if((ptr - dt->dataPool - coffValue) % coffValue == 0) {  // LEFT
+                if(dt->offsetPool[i] != dt->offsetPool[i-1]) break;
+                allocdt_Combine(dt, i-1);
+            } else break;
+        }
+        */
+        // UNLOCK the offset position.
+        dt->offsetPool[i] ^= 0b10000000;
+        // NEED OFFSET COMPRESSION
+
+        return VT_RESULT_SUCCESS;
+    }
+    return VT_RESULT_MEM_ADDR_NOT_FOUND;
 }
 
 // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 // NAME REGISTER
 // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
-
-#include <stdlib.h>
-#include <string.h>
-
-
 typedef int64_t nameid_t;
 
-struct nameref {
+static struct nameref {
     const char *n;
     void *ref;
 };
@@ -64,7 +195,7 @@ static int nameref_comp(const void *a, const void *b) {
 }
 
 
-struct namedt {
+static struct namedt {
     struct nameref *pRef;
     nameid_t namePCount;
     nameid_t nameLCount;
@@ -94,7 +225,6 @@ static inline vtResult namedt_Pull(
     struct namedt *dt,
     nameid_t id
 ) {
-
 #if SET_LOOKUP_BINTREE == VRT_ON
     // keep order
     for(id += 1; id < dt->nameLCount; ++id) {
@@ -154,6 +284,25 @@ static inline vtResult namedt_Find(
     
     // would be fun if it returned the position that it should be at
     return VT_RESULT_FAILED;
+}
+
+
+// // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
+// // PAGE DATA
+// // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
+struct pagedt {
+    struct namedt n;
+
+    uint8_t *pData;
+    uint64_t dataSize;
+
+    uint8_t *pOffset;
+    uint64_t offsetPCount;
+    uint64_t offsetLCount;
+};
+
+static inline vtResult pagedt_Init(struct pagedt *dt) {
+    return VT_RESULT_SUCCESS;
 }
 
 

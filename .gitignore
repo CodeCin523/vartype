@@ -2,8 +2,11 @@ _build/
 .cache/
 .vscode/
 
+include/vartype/mem.h
+
 src/set.h
 src/tmpl.c
+src/mem.c
 
 compile_commands.json
 README.test.md
