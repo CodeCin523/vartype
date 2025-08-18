@@ -6,60 +6,88 @@
 int main(int argc, char **argv) {
     vtResult res = 0;
     struct allocdt dt = {
-        .dataCount = 4, // it needs the LEFT_MOST bit of the size, not the size. 16 bytes curently
+        .dataCount = 4, // Represents the LEFT_MOST bit of the size, currently set to 16 bytes.
         .dataPool = NULL,
         .offsetLCount = 1,
         .offsetPCount = 1,
         .offsetPool = NULL
     };
-    dt.dataPool = malloc(1<<dt.dataCount);
+
+    // Allocate memory for the data pool based on dataCount
+    dt.dataPool = malloc(1 << dt.dataCount);
     dt.offsetPool = malloc(dt.offsetPCount);
-                    // dt.dataCount should already be the LEFT_MOST bit, so no need ot find its LEFT_MOST bit.
+    
+    // Set the first offset in the offset pool to the LEFT_MOST bit of dataCount
     dt.offsetPool[0] = dt.dataCount & 0b01111111;
 
-    for(int i = 0; i < dt.offsetLCount; ++i) printf("%d ", dt.offsetPool[i]); printf("\n");
+    // Print the current offset values
+    for(int i = 0; i < dt.offsetLCount; ++i) {
+        printf("%d ", dt.offsetPool[i]);
+    }
+    printf("\n");
 
-    // 1 BYTE
-    printf("Start Allocating Memory\n");
-    uint32_t p1 = allocdt_Alloc(&dt, 1);  // reserve 1 byte.
-    if(p1!=0) {
-        printf("FAILED ALLOC OF 1 BYTE AT EXPECTED OFFSET. %d\n", p1);
+    // Allocate 1 BYTE
+    printf("Starting memory allocation for 1 byte...\n");
+    uint32_t p1 = allocdt_Alloc(&dt, 1);  // Reserve 1 byte.
+    if(p1 != 0) {
+        printf("Allocation failed for 1 byte at expected offset. Actual offset: %d\n", p1);
         return 1;
     }
-    printf("Success for alloc of 1 byte at offset: %d.\n", p1);
+    printf("Successfully allocated 1 byte at offset: %d.\n", p1);
 
-    for(int i = 0; i < dt.offsetLCount; ++i) printf("%d ", dt.offsetPool[i]); printf("\n");
+    // Print the current offset values after allocation
+    for(int i = 0; i < dt.offsetLCount; ++i) {
+        printf("%d ", dt.offsetPool[i]);
+    }
+    printf("\n");
 
-    // 2 BYTES
-    printf("Start Size-Class Offset (SCO lol)\n");
-    uint32_t p2 = allocdt_Alloc(&dt, 2);  // reserve 2 bytes.
+    // Allocate 2 BYTES
+    printf("Starting memory allocation for 2 bytes...\n");
+    uint32_t p2 = allocdt_Alloc(&dt, 2);  // Reserve 2 bytes.
     
-    if(p2!=2) {
-        printf("FAILED ALLOC OF 2 BYTES AT EXPECTED OFFSET. %d\n", p2);
+    if(p2 != 2) {
+        printf("Allocation failed for 2 bytes at expected offset. Actual offset: %d\n", p2);
         return 1;
     }
-    printf("Success for alloc of 2 bytes at offset: %d.\n", p2);
+    printf("Successfully allocated 2 bytes at offset: %d.\n", p2);
 
-    for(int i = 0; i < dt.offsetLCount; ++i) printf("%d ", dt.offsetPool[i]); printf("\n");
+    // Print the current offset values after allocation
+    for(int i = 0; i < dt.offsetLCount; ++i) {
+        printf("%d ", dt.offsetPool[i]);
+    }
+    printf("\n");
 
     // FREE 1 BYTE
-    printf("Start Deallocating Memory\n");
+    printf("Starting memory deallocation for 1 byte...\n");
     if(allocdt_Free(&dt, p1) != VT_RESULT_SUCCESS) {
-        printf("FAILED DEALLOC OF 1 BYTE.\n");
+        printf("Deallocation failed for 1 byte.\n");
         return 1;
     }
-    printf("Success for dealloc of 1 byte.\n");
+    printf("Successfully deallocated 1 byte.\n");
 
-    for(int i = 0; i < dt.offsetLCount; ++i) printf("%d ", dt.offsetPool[i]); printf("\n");
+    // Print the current offset values after deallocation
+    for(int i = 0; i < dt.offsetLCount; ++i) {
+        printf("%d ", dt.offsetPool[i]);
+    }
+    printf("\n");
 
-    // FREE 2 BYTE
-    printf("Start Deallocating SCO\n");
+    // FREE 2 BYTES
+    printf("Starting memory deallocation for 2 bytes...\n");
     if(allocdt_Free(&dt, p2) != VT_RESULT_SUCCESS) {
-        printf("FAILED DEALLOC OF 2 BYTES.\n");
+        printf("Deallocation failed for 2 bytes.\n");
         return 1;
     }
-    printf("Success for dealloc of 2 bytes.\n");
+    printf("Successfully deallocated 2 bytes.\n");
     
-    for(int i = 0; i < dt.offsetLCount; ++i) printf("%d ", dt.offsetPool[i]); printf("\n");
+    // Print the current offset values after deallocation
+    for(int i = 0; i < dt.offsetLCount; ++i) {
+        printf("%d ", dt.offsetPool[i]);
+    }
+    printf("\n");
 
+    // Free allocated memory for dataPool and offsetPool
+    free(dt.dataPool);
+    free(dt.offsetPool);
+
+    return 0;
 }
