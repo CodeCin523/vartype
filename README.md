@@ -18,7 +18,7 @@ To build and install the `vartype` library, follow these steps:
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/KurabeTV/vartype.git
+   git clone https://github.com/CodeCin523/vartype.git
    cd vartype
    ```
 
