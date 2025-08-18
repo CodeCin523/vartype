@@ -96,9 +96,7 @@ static inline vtResult allocdt_offCombine(
         dt->offsetLCount - i - 1
     );
 
-
-    uint8_t offset = dt->offsetPool[i] + 1;
-    dt->offsetPool[i] = offset;
+    dt->offsetPool[i] += 1;
 
     --dt->offsetLCount;
     return VT_RESULT_SUCCESS;
@@ -108,7 +106,7 @@ static inline uint32_t allocdt_Alloc(
     struct allocdt *dt,
     size_t size
 ) {
-    int offset = FIND_LEFTMOST_BIT(size) + 1;   // 1 gives 0, so corrected to give 1
+    int offset = FIND_LEFTMOST_BIT(size);
 
     // Find position in pool.
     uint32_t ptr = 0;
@@ -116,7 +114,7 @@ static inline uint32_t allocdt_Alloc(
     for(; i < dt->offsetLCount; ++i) {
         uint32_t coff = dt->offsetPool[i] & 0b01111111;
 
-        if (!(dt->offsetPool[i] & 0b10000000)) {
+        if ((dt->offsetPool[i] & 0b10000000) == 0) {
             if (coff == offset) {    // Perfect Size
                 break;
             }
@@ -131,7 +129,7 @@ static inline uint32_t allocdt_Alloc(
                 break;
             }
         }
-        ptr += coff;
+        ptr += 1 << coff;
     }
     if(i==dt->offsetLCount)
         return UINT32_MAX;
@@ -152,21 +150,25 @@ static inline vtResult allocdt_Free(
             continue;
         }
 
-        /* // WRONG !!!!!
-        while(1) {
-            uint64_t coffValue = 1<<coff;
-            if((ptr - dt->dataPool) % coffValue == 0) { // RIGHT
-                if(dt->offsetPool[i] != dt->offsetPool[i+1]) break;
-                allocdt_Combine(dt, i);
-            } else if((ptr - dt->dataPool - coffValue) % coffValue == 0) {  // LEFT
-                if(dt->offsetPool[i] != dt->offsetPool[i-1]) break;
-                allocdt_Combine(dt, i-1);
-            } else break;
-        }
-        */
         // UNLOCK the offset position.
         dt->offsetPool[i] ^= 0b10000000;
-        // NEED OFFSET COMPRESSION
+
+        // OFFSET COMPRESSION
+        while (1/*(dt->offsetPool[i] & 0b10000000) == 0*/) {
+            uint32_t coffMod = (1 << coff);
+            uint32_t alignCoffMod = ptr % (1 << (coff+1));
+
+            if(i < dt->offsetLCount     && alignCoffMod == 0) {     // RIGHT
+                if(dt->offsetPool[i+1] != dt->offsetPool[i]) break;
+                allocdt_offCombine(dt, i);
+            }else if(i > 0              && alignCoffMod-coffMod == 0) {   // LEFT
+                if(dt->offsetPool[i-1] != dt->offsetPool[i]) break;
+                allocdt_offCombine(dt, --i);
+                ptr -= coffMod;
+            } else break;
+
+            coff = dt->offsetPool[i] & 0b01111111;
+        }
 
         return VT_RESULT_SUCCESS;
     }
