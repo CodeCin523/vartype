@@ -74,15 +74,20 @@ This will allow you to use the `vartype` library in your project without needing
 
 |Name|Description|
 |--|--|
+|<div style="text-align: center;">**Initialization**</div>|
 |`VRTresult VRT_Init()`| Initializes the library.|
+|<div style="text-align: center;">**Register**</div>|
 |`VRTresult VRT_RegisterPage(`<br>`const VRTpage_t _page, const char *const _name,`<br>`VRTpage_t *p)`|Registers a new page.|
 |`VRTresult VRT_RegisterVar(`<br>`const VRTpage_t _page, const char *const _name, const uint16_t uCount,`<br>`VRTvar_t *v)` |Registers a variable in a specified page.|
+|<div style="text-align: center;">**Find**</div>|
 |`VRTresult VRT_FindPage(`<br>`const VRTpage_t _page, const char *const _name,`<br>`VRTpage_t *p)`|Finds a page by its name and retrieves its identifier.|
 |`VRTresult VRT_FindVar(`<br>`const VRTpage_t _page, const char *const _name,`<br>`VRTvar_t *v)`|Finds a variable by its name and retrieves its details.|
 |`VRTresult VRT_GetPParent(`<br>`const VRTpage_t _child,`<br>`VRTpage_t *page)`|Retrieves the parent page of a specified child page.|
+|<div style="text-align: center;">**Hierarchy**</div>|
 |`VRTresult VRT_GetPChild(`<br>`const VRTpage_t _parent, const uint64_t _offset,`<br>`VRTpage_t *page)`|Retrieves the child page at a specified offset from a parent page.|
 |`VRTresult VRT_GetVParent(`<br>`const VRTvar_t _child`<br>`VRTpage_t *page)`|Retrieves the parent page of a specified variable.|
 |`VRTresult VRT_GetVChild(`<br>`const VRTpage_t _parent, const uint64_t _offset,`<br>`VRTvar_t *var)`|Retrieves the var at a specified offset from a parent page.|
+|<div style="text-align: center;">**Data**</div>|
 |`VRTresult VRT_GetData(`<br>`const VRTvar_t _var,`<br>`void **data)`|Retrieves the data associated with a specified variable.|
 
 ## License
