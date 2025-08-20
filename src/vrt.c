@@ -1,5 +1,5 @@
-#include <vartype/var.h>
-#include <vartype/strerror.h>
+#include <vartype/vrt.h>
+#include <vartype/strresult.h>
 
 #include "set.h"
 
@@ -43,7 +43,7 @@ static inline uint8_t FIND_LEFTMOST_BIT(uint64_t x) {
 #endif
 }
 
-static inline vtResult allocdt_offcCheck(
+static inline VRTresult allocdt_offcCheck(
     struct allocdt *dt
 ) {
     if(dt->offsetLCount >= dt->offsetPCount) {
@@ -52,7 +52,7 @@ static inline vtResult allocdt_offcCheck(
 #if SET_CALLOC_USAGE == VRT_ON
         temp = calloc(dt->offsetPCount, sizeof(*dt->offsetPool));
         if(temp == NULL)
-            return VT_RESULT_FAILED;
+            return VRT_RESULT_FAILED;
         if(dt->offsetPool != NULL) {
             memcpy(temp, dt->offsetPool, dt->offsetLCount);
             free(dt->offsetPool);
@@ -61,14 +61,14 @@ static inline vtResult allocdt_offcCheck(
 #endif
         dt->offsetPool = temp;
     }
-    return VT_RESULT_SUCCESS;
+    return VRT_RESULT_SUCCESS;
 }
-static inline vtResult allocdt_offDivide(
+static inline VRTresult allocdt_offDivide(
     struct allocdt *dt,
     uint8_t *first
 ) {
     if(dt->offsetLCount >= dt->offsetPCount)
-        return VT_RESULT_ERR_NO_SPACE;
+        return VRT_RESULT_LACK_SPACE;
 
     memcpy(
         &first[1],
@@ -81,14 +81,14 @@ static inline vtResult allocdt_offDivide(
     *first   = offset;
 
     ++dt->offsetLCount;
-    return VT_RESULT_SUCCESS;
+    return VRT_RESULT_SUCCESS;
 }
-static inline vtResult allocdt_offCombine(
+static inline VRTresult allocdt_offCombine(
     struct allocdt *dt,
     int i
 ) {
-    // if(dt->dataPool[i] != dt-> dataPool[i+1])
-    //     return VT_RESULT_FAILED;
+    if(dt->dataPool[i] != dt-> dataPool[i+1])
+        return VRT_RESULT_FAILED;
     
     memcpy(
         &dt->offsetPool[i],
@@ -99,7 +99,7 @@ static inline vtResult allocdt_offCombine(
     dt->offsetPool[i] += 1;
 
     --dt->offsetLCount;
-    return VT_RESULT_SUCCESS;
+    return VRT_RESULT_SUCCESS;
 }
 
 static inline uint32_t allocdt_Alloc(
@@ -121,7 +121,7 @@ static inline uint32_t allocdt_Alloc(
             else if (coff > offset) {  // Too Big
                 // Divide until perfect size
                 while (coff != offset) {
-                    if (allocdt_offcCheck(dt) == VT_RESULT_FAILED)
+                    if (allocdt_offcCheck(dt) != VRT_RESULT_SUCCESS)
                         return UINT32_MAX;
                     allocdt_offDivide(dt, &dt->offsetPool[i]);
                     coff = dt->offsetPool[i];
@@ -137,7 +137,7 @@ static inline uint32_t allocdt_Alloc(
     dt->offsetPool[i] |= 0b10000000;
     return ptr;
 }
-static inline vtResult allocdt_Free(
+static inline VRTresult allocdt_Free(
     struct allocdt *dt,
     uint32_t addr
 ) {
@@ -170,9 +170,9 @@ static inline vtResult allocdt_Free(
             coff = dt->offsetPool[i] & 0b01111111;
         }
 
-        return VT_RESULT_SUCCESS;
+        return VRT_RESULT_SUCCESS;
     }
-    return VT_RESULT_MEM_ADDR_NOT_FOUND;
+    return VRT_RESULT_ADDR_NOT_FOUND;
 }
 
 // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
@@ -203,12 +203,12 @@ static struct namedt {
     nameid_t nameLCount;
 };
 
-static inline vtResult namedt_Push(
+static inline VRTresult namedt_Push(
     struct namedt *dt,
     const char *name, void *ref
 ) {
     if(dt->nameLCount == dt->namePCount)
-        return VT_RESULT_ERR_NO_SPACE;
+        return VRT_RESULT_LACK_SPACE;
 
     // push back
     dt->pRef[dt->nameLCount].n = name;
@@ -221,9 +221,9 @@ static inline vtResult namedt_Push(
 #endif
 
 
-    return VT_RESULT_SUCCESS;
+    return VRT_RESULT_SUCCESS;
 }
-static inline vtResult namedt_Pull(
+static inline VRTresult namedt_Pull(
     struct namedt *dt,
     nameid_t id
 ) {
@@ -243,10 +243,10 @@ static inline vtResult namedt_Pull(
     dt->pRef[dt->nameLCount].ref = 0;
 #endif
 
-    return VT_RESULT_SUCCESS;
+    return VRT_RESULT_SUCCESS;
 }
 
-static inline vtResult namedt_Find(
+static inline VRTresult namedt_Find(
     struct namedt *dt, 
     const char *name,
     nameid_t *id
@@ -263,7 +263,7 @@ static inline vtResult namedt_Find(
 
         if(r == 0) {
             *id = mid;
-            return VT_RESULT_SUCCESS;
+            return VRT_RESULT_SUCCESS;
         }
 
         if(r < 0)
@@ -274,18 +274,18 @@ static inline vtResult namedt_Find(
     mid = mid < 0 ? 0 : mid;
     if(nameref_comp((const void *)&dt->pRef[mid], (const void *)&new) == 0) {
         *id = mid;
-        return VT_RESULT_SUCCESS;
+        return VRT_RESULT_SUCCESS;
     }
 #else
     for(nameid_t i = 0; i < dt->nameLCount; ++i) {
         if(nameref_comp((const void *)&dt->pRef[i], (const void *)&new) != 0) continue;
         *id = i;
-        return VT_RESULT_SUCCESS;
+        return VRT_RESULT_SUCCESS;
     }
 #endif
     
     // would be fun if it returned the position that it should be at
-    return VT_RESULT_FAILED;
+    return VRT_RESULT_FAILED;
 }
 
 
@@ -303,8 +303,8 @@ struct pagedt {
     uint64_t offsetLCount;
 };
 
-static inline vtResult pagedt_Init(struct pagedt *dt) {
-    return VT_RESULT_SUCCESS;
+static inline VRTresult pagedt_Init(struct pagedt *dt) {
+    return VRT_RESULT_SUCCESS;
 }
 
 
@@ -319,42 +319,42 @@ static struct namedt pageNames;
 
 static struct pagedt *pPageData;
 static struct pageHierachy {
-    vtPage_t i;     // index
-    vtPage_t cc;    // child count
+    VRTpage_t i;     // index
+    VRTpage_t cc;    // child count
 } *pPageHierarchy;
-static vtPage_t pageHierarchyLCount;
-static vtPage_t pageHierarchyPCount;
+static VRTpage_t pageHierarchyLCount;
+static VRTpage_t pageHierarchyPCount;
 
 
-vtResult VtInit(
+VRTresult VRT_Init(
     
 ) {
-    return VT_RESULT_SUCCESS;
+    return VRT_RESULT_SUCCESS;
 }
 
-vtResult VtRegisterPage(
-    const vtPage_t _page, const char *const _name,
-    vtPage_t *p
+VRTresult VRT_RegisterPage(
+    const VRTpage_t _page, const char *const _name,
+    VRTpage_t *p
 ) {
-    if(p==NULL) return VT_RESULT_ERR_NO_REF;
-    if(_name==NULL) return VT_RESULT_ERR_NO_NAME;
+    if(p==NULL) return VRT_RESULT_NO_PTR;
+    if(_name==NULL) return VRT_RESULT_NO_NAME;
 
     // if cannot add more
     if(pageHierarchyLCount==pageHierarchyPCount)
-        return VT_RESULT_ERR_NO_SPACE;
+        return VRT_RESULT_LACK_SPACE;
     
-    if(namedt_Find(&pageNames, _name, NULL) != VT_RESULT_SUCCESS)
-        return VT_RESULT_ERR_REGISTERED_LOCALLY;
+    if(namedt_Find(&pageNames, _name, NULL) != VRT_RESULT_SUCCESS)
+        return VRT_RESULT_REGISTERED_LOCALLY;
 
     // find parent
     struct pageHierachy *pa = pPageHierarchy;
-    for(vtPage_t i = 0; i < pageHierarchyLCount; ++i) {
+    for(VRTpage_t i = 0; i < pageHierarchyLCount; ++i) {
         if(pPageHierarchy[i].i != _page) continue;
         pa = &pPageHierarchy[i];
         break;
     }
     // find place
-    for(vtPage_t i = 0; i < pageHierarchyPCount; ++i) {
+    for(VRTpage_t i = 0; i < pageHierarchyPCount; ++i) {
         if(pPageData[i].pData != NULL) continue;
         *p = i;
         break;
@@ -364,80 +364,84 @@ vtResult VtRegisterPage(
     
 
     
-    return VT_RESULT_SUCCESS;
+    return VRT_RESULT_SUCCESS;
 }
-vtResult VtRegisterVar(
-    const vtPage_t _page, const char *const _name, const uint16_t uCount,
-    vtVar_t *v
+VRTresult VRT_RegisterVar(
+    const VRTpage_t _page, const char *const _name, const uint16_t uCount,
+    VRTvar_t *v
 ) {
-    if(v==NULL) return VT_RESULT_ERR_NO_REF;
-    if(_name==NULL) return VT_RESULT_ERR_NO_NAME;
+    if(v==NULL) return VRT_RESULT_NO_PTR;
+    if(_name==NULL) return VRT_RESULT_NO_NAME;
 
-    return VT_RESULT_SUCCESS;
-}
-
-vtResult VtFindPage(
-    const vtPage_t _page, const char *const _name,
-    vtPage_t *p
-) {
-    if(p==NULL) return VT_RESULT_ERR_NO_REF;
-    if(_name==NULL) return VT_RESULT_ERR_NO_NAME;
-
-    return VT_RESULT_SUCCESS;
-}
-vtResult VtFindVar(
-    const vtPage_t _page, const char *const _name,
-    vtVar_t *v
-) {
-    if(v==NULL) return VT_RESULT_ERR_NO_REF;
-    if(_name==NULL) return VT_RESULT_ERR_NO_NAME;
-    return VT_RESULT_SUCCESS;
+    return VRT_RESULT_SUCCESS;
 }
 
-vtResult VtGetPParent(
-    const vtPage_t _child,
-    vtPage_t *page
+VRTresult VRT_FindPage(
+    const VRTpage_t _page, const char *const _name,
+    VRTpage_t *p
 ) {
-    return VT_RESULT_SUCCESS;
+    if(p==NULL) return VRT_RESULT_NO_PTR;
+    if(_name==NULL) return VRT_RESULT_NO_NAME;
+
+    return VRT_RESULT_SUCCESS;
 }
-vtResult VtGetVParent(
-    const vtVar_t _child,
-    vtPage_t *page
+VRTresult VRT_FindVar(
+    const VRTpage_t _page, const char *const _name,
+    VRTvar_t *v
 ) {
-    return VT_RESULT_SUCCESS;
+    if(v==NULL) return VRT_RESULT_NO_PTR;
+    if(_name==NULL) return VRT_RESULT_NO_NAME;
+    return VRT_RESULT_SUCCESS;
 }
 
-vtResult VtGetPChild(
-    const vtPage_t _parent, const uint64_t _offset,
-    vtPage_t *page
+VRTresult VRT_GetPParent(
+    const VRTpage_t _child,
+    VRTpage_t *page
 ) {
-    return VT_RESULT_SUCCESS;
+    return VRT_RESULT_SUCCESS;
+}
+VRTresult VRT_GetPChild(
+    const VRTpage_t _parent, const uint64_t _offset,
+    VRTpage_t *page
+) {
+    return VRT_RESULT_SUCCESS;
 }
 
-vtResult VtGetData(
-    const vtVar_t _var,
+VRTresult VRT_GetVParent(
+    const VRTvar_t _child,
+    VRTpage_t *page
+) {
+    return VRT_RESULT_SUCCESS;
+}
+VRTresult VRT_GetVChild(
+    const VRTpage_t _parent, const uint64_t _offset,
+    VRTvar_t *var
+) {
+    return VRT_RESULT_SUCCESS;
+}
+
+VRTresult VRT_GetData(
+    const VRTvar_t _var,
     void **data
 ) {
-    return VT_RESULT_SUCCESS;
+    return VRT_RESULT_SUCCESS;
 }
 
 // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 // STRING ERROR
 // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 static const char * const errname[] = {
-    "Generic fail",
-    "Generic success",
-    "This name is already registered in one of the parents of the requested page",
-    "This name is already registered in the requested page",
-    "This name is already registered in on of the childrens of the requested page",
-    "Failed to request a memory map",
-    "Failed to request heap memory",
-    "Address wasn't found",
-    "No memory was left",
-    "No reference was passed to the function",
-    "No name was passed to the function"
+    "Success",                             // VRT_RESULT_SUCCESS
+    "Failed",                              // VRT_RESULT_FAILED
+    "No pointer available",                // VRT_RESULT_NO_PTR
+    "No name provided",                    // VRT_RESULT_NO_NAME
+    "Lack of space",                       // VRT_RESULT_LACK_SPACE
+    "Address not found",                   // VRT_RESULT_ADDR_NOT_FOUND
+    "Registered locally",                  // VRT_RESULT_REGISTERED_LOCALLY
+    "Registered in parent",                // VRT_RESULT_REGISTERED_IN_PARENT
+    "Registered in child"                  // VRT_RESULT_REGISTERED_IN_CHILD
 };
-const char *const VtStrError(vtResult _r) {
-    if(_r > 10) return NULL;
+const char *const VRT_StrResult(VRTresult _r) {
+    if(_r > 9) return NULL;
     return errname[_r];
 }

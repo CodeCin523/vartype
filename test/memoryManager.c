@@ -1,10 +1,10 @@
-#include "../src/var.c"
+#include "../src/vrt.c"
 
 #include <stdio.h>
 #include <stdlib.h>
 
 int main(int argc, char **argv) {
-    vtResult res = 0;
+    VRTresult res = 0;
     struct allocdt dt = {
         .dataCount = 4, // Represents the LEFT_MOST bit of the size, currently set to 16 bytes.
         .dataPool = NULL,
@@ -59,7 +59,7 @@ int main(int argc, char **argv) {
 
     // FREE 1 BYTE
     printf("Starting memory deallocation for 1 byte...\n");
-    if(allocdt_Free(&dt, p1) != VT_RESULT_SUCCESS) {
+    if(allocdt_Free(&dt, p1) != VRT_RESULT_SUCCESS) {
         printf("Deallocation failed for 1 byte.\n");
         return 1;
     }
@@ -73,7 +73,7 @@ int main(int argc, char **argv) {
 
     // FREE 2 BYTES
     printf("Starting memory deallocation for 2 bytes...\n");
-    if(allocdt_Free(&dt, p2) != VT_RESULT_SUCCESS) {
+    if(allocdt_Free(&dt, p2) != VRT_RESULT_SUCCESS) {
         printf("Deallocation failed for 2 bytes.\n");
         return 1;
     }
