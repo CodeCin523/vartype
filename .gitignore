@@ -3,8 +3,8 @@ _build/
 .vscode/
 
 include/vartype/mem.h
+include/vartype/set.h
 
-src/set.h
 src/tmpl.c
 src/mem.c
 

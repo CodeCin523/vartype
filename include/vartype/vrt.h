@@ -1,5 +1,5 @@
-#ifndef __VAR_H__
-#define __VAR_H__
+#ifndef __VRT_H__
+#define __VRT_H__
 
 #ifdef __cplusplus
 extern "C" {

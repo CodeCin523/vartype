@@ -1,28 +1,24 @@
 #ifndef __SET_H__
 #define __SET_H__
 
-// Enable/Disable features
-#define VRT_ON  1
-#define VRT_OFF 0
+#include <stdint.h>
 
-// Comparison Algorithm Settings
-// CMake Variables: VRT_SET_STRCMP_CHAR, VRT_SET_CPYNAME, VRT_SET_STRCMP_ADDR
-#define SET_STRCMP_CHAR     ${VRT_SET_STRCMP_CHAR}  // Use strcmp for character comparison
-#define SET_CPYNAME         ${VRT_SET_CPYNAME}      // Use custom copy name function
-#define SET_STRCMP_ADDR     ${VRT_SET_STRCMP_ADDR}  // Use address comparison
+#define VRT_SET_STRCMP_CHAR     0b00000000
+#define VRT_SET_STRCMP_ADDR     0b00000001
+#define VRT_SET_LOOKUP_LINEAR   0b00000000
+#define VRT_SET_LOOKUP_BINTREE  0b00000010
 
-// Lookup/Storage Algorithm Settings
-// CMake Variables: VRT_SET_LOOKUP_BINTREE, VRT_SET_LOOKUP_LINEAR
-#define SET_LOOKUP_BINTREE  ${VRT_SET_LOOKUP_BINTREE}   // Use binary tree for lookup
-#define SET_LOOKUP_LINEAR   ${VRT_SET_LOOKUP_LINEAR}    // Use linear search for lookup
+#define VRT_SET_STRCMP  ${VRT_SET_STRCMP}
+#define VRT_SET_LOOKUP  ${VRT_SET_LOOKUP}
 
-// Thread Safety Settings
-// CMake Variable: VRT_SET_THREAD_SAFETY
-#define SET_THREAD_SAFETY   ${VRT_SET_THREAD_SAFETY}    // 1 for enabled, 0 for disabled
+typedef struct VRTsetMemorySize {
+    uint64_t mmapSize;  // mmap size
+    uint64_t pageSize;  // page size
 
-// Memory Allocation Settings
-// CMake Variable: VRT_SET_CALLOC_USAGE
-#define SET_CALLOC_USAGE    ${VRT_SET_CALLOC_USAGE}     // 1 for allowed, 0 for disallowed
-
+#if VRT_SET_STRCMP == VRT_SET_STRCMP_CHAR
+    uint64_t nameSize;  // name mmap size
+#endif
+} VRTsetMemory_t;
 
 #endif
+

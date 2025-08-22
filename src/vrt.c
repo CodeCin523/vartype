@@ -1,7 +1,7 @@
+#include <vartype/set.h>
+
 #include <vartype/vrt.h>
 #include <vartype/strresult.h>
-
-#include "set.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -49,7 +49,7 @@ static inline VRTresult allocdt_offcCheck(
     if(dt->offsetLCount >= dt->offsetPCount) {
         dt->offsetPCount *= 2;
         uint8_t *temp = NULL;
-#if SET_CALLOC_USAGE == VRT_ON
+#if 0==0
         temp = calloc(dt->offsetPCount, sizeof(*dt->offsetPool));
         if(temp == NULL)
             return VRT_RESULT_FAILED;
@@ -188,7 +188,7 @@ static struct nameref {
 static int nameref_comp(const void *a, const void *b) {
     struct nameref *na = (struct nameref *)a, *nb = (struct nameref *)b;
 
-#if SET_STRCMP_CHAR == VRT_ON
+#if VRT_SET_STRCMP == VRT_SET_STRCMP_CHAR
     return strcmp(na->n, nb->n);
 #else
     int i = na->n - nb->n;
@@ -215,7 +215,7 @@ static inline VRTresult namedt_Push(
     dt->pRef[dt->nameLCount].ref = ref;
     ++dt->nameLCount;
 
-#if SET_LOOKUP_BINTREE == VRT_ON
+#if VRT_SET_LOOKUP == VRT_SET_LOOKUP_BINTREE
     // I give up
     qsort(dt->pRef, dt->nameLCount, sizeof(struct nameref), nameref_comp);
 #endif
@@ -227,7 +227,7 @@ static inline VRTresult namedt_Pull(
     struct namedt *dt,
     nameid_t id
 ) {
-#if SET_LOOKUP_BINTREE == VRT_ON
+#if VRT_SET_LOOKUP == VRT_SET_LOOKUP_BINTREE
     // keep order
     for(id += 1; id < dt->nameLCount; ++id) {
         dt->pRef[id-1] = dt->pRef[id];
@@ -255,7 +255,7 @@ static inline VRTresult namedt_Find(
         .n = name,
         .ref = NULL
     };
-#if SET_LOOKUP_BINTREE == VRT_ON
+#if VRT_SET_LOOKUP == VRT_SET_LOOKUP_BINTREE
     nameid_t left = 0, right = dt->nameLCount, mid = 0;
     while(left < right) {
         mid = left + (right - left) / 2;
@@ -311,10 +311,6 @@ static inline VRTresult pagedt_Init(struct pagedt *dt) {
 // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 // INTERFACE
 // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
-#if SET_STRCMP_CHAR == VRT_ON
-#else
-#endif
-
 static struct namedt pageNames;
 
 static struct pagedt *pPageData;
@@ -327,8 +323,14 @@ static VRTpage_t pageHierarchyPCount;
 
 
 VRTresult VRT_Init(
-    
+    const VRTpage_t _pageMaxCount
 ) {
+#if 0==0
+    pPageHierarchy = (struct pageHierachy *) calloc(_pageMaxCount, sizeof(struct pageHierachy));
+    if(pPageHierarchy == NULL)
+        return VRT_RESULT_LACK_SPACE;
+#endif
+
     return VRT_RESULT_SUCCESS;
 }
 
@@ -339,31 +341,9 @@ VRTresult VRT_RegisterPage(
     if(p==NULL) return VRT_RESULT_NO_PTR;
     if(_name==NULL) return VRT_RESULT_NO_NAME;
 
-    // if cannot add more
-    if(pageHierarchyLCount==pageHierarchyPCount)
-        return VRT_RESULT_LACK_SPACE;
-    
-    if(namedt_Find(&pageNames, _name, NULL) != VRT_RESULT_SUCCESS)
-        return VRT_RESULT_REGISTERED_LOCALLY;
+    // Does the name already exist?
+    // Add 
 
-    // find parent
-    struct pageHierachy *pa = pPageHierarchy;
-    for(VRTpage_t i = 0; i < pageHierarchyLCount; ++i) {
-        if(pPageHierarchy[i].i != _page) continue;
-        pa = &pPageHierarchy[i];
-        break;
-    }
-    // find place
-    for(VRTpage_t i = 0; i < pageHierarchyPCount; ++i) {
-        if(pPageData[i].pData != NULL) continue;
-        *p = i;
-        break;
-    }
-    pagedt_Init(&pPageData[*p]);
-
-    
-
-    
     return VRT_RESULT_SUCCESS;
 }
 VRTresult VRT_RegisterVar(

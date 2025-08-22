@@ -16,67 +16,24 @@ set(CMAKE_C_STANDARD_REQUIRED ON)
 
 
 # ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
-# SETTINGS v1.2
+# SETTINGS v2.0
 # ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
-if(NOT DEFINED VRT_SETTING_STRCMP)
-    message("VRT_SETTING_STRCMP not defined.")
-    set(VRT_SET_STRCMP_CHAR         VRT_OFF )
-    set(VRT_SET_STRCMP_ADDR         VRT_ON  )
-else()
-    if(VRT_SETTING_STRCMP STREQUAL "char")
-        set(VRT_SET_STRCMP_CHAR     VRT_ON  )
-        set(VRT_SET_STRCMP_ADDR     VRT_OFF )
-    elseif(VRT_SETTING_STRCMP STREQUAL "addr")
-        set(VRT_SET_STRCMP_CHAR     VRT_OFF )
-        set(VRT_SET_STRCMP_ADDR     VRT_ON  )
-    else()
-        message("VRT_SETTING_STRCMP invalid.")
-        set(VRT_SET_STRCMP_CHAR     VRT_OFF )
-        set(VRT_SET_STRCMP_ADDR     VRT_ON  )
-    endif()
+option(VRT_SET_STRCMP "String Saving and Comparing Logic" VRT_SET_STRCMP_ADDR)
+if(NOT(
+    VRT_SET_STRCMP STREQUAL VRT_SET_STRCMP_ADDR OR
+    VRT_SET_STRCMP STREQUAL VRT_SET_STRCMP_CHAR
+))
+    set(VRT_SET_STRCMP VRT_SET_STRCMP_ADDR)
 endif()
-if(VRT_SET_STRCMP_CHAR STREQUAL "VRT_ON")
-    if(NOT DEFINED VRT_SETTING_COPY_STRING)
-        message("VRT_SETTING_COPY_STRING not defined.")
-        set(VRT_SET_CPYNAME         VRT_OFF )
-    elseif(VRT_SETTING_COPY_STRING STREQUAL "on")
-        set(VRT_SET_CPYNAME         VRT_ON  )
-    elseif(VRT_SETTING_COPY_STRING STREQUAL "off")
-        set(VRT_SET_CPYNAME         VRT_OFF )
-    else()
-        message("VRT_SETTING_COPY_STRING invalid.")
-        set(VRT_SET_CPYNAME         VRT_OFF )
-    endif()
-else()
-    set(VRT_SET_CPYNAME             VRT_OFF )
-endif()
-if(NOT DEFINED VRT_SETTING_LOOKUP)
-    message("VRT_SETTING_LOOKUP not defined.")
-    set(VRT_SET_LOOKUP_BINTREE      VRT_OFF )
-    set(VRT_SET_LOOKUP_LINEAR       VRT_ON  )
-else()
-    if(VRT_SETTING_LOOKUP STREQUAL "bintree")
-        set(VRT_SET_LOOKUP_BINTREE  VRT_ON  )
-        set(VRT_SET_LOOKUP_LINEAR   VRT_OFF )
-    elseif(VRT_SETTING_LOOKUP STREQUAL "linear")
-        set(VRT_SET_LOOKUP_BINTREE  VRT_OFF )
-        set(VRT_SET_LOOKUP_LINEAR   VRT_ON  )
-    else()
-        message("VRT_SETTING_LOOKUP invalid.")
-        set(VRT_SET_LOOKUP_BINTREE  VRT_OFF )
-        set(VRT_SET_LOOKUP_LINEAR   VRT_ON  )
-    endif()
-endif()
-if(NOT DEFINED VRT_SETTING_THREAD_SAFETY)
-    message("VRT_SETTING_THREAD_SAFETY not defined.")
-    set(VRT_SET_THREAD_SAFETY       VRT_OFF )
-endif()
-if(NOT DEFINED VRT_SETTING_CALLOC_USAGE)
-    message("VRT_SETTING_CALLOC_USAGE not defined.")
-    set(VRT_SET_CALLOC_USAGE        VRT_ON  )
+option(VRT_SET_LOOKUP "Name Lookup Algorithm" VRT_SET_LOOKUP_LINEAR)
+if(NOT(
+    VRT_SET_LOOKUP STREQUAL VRT_SET_LOOKUP_LINEAR OR
+    VRT_SET_LOOKUP STREQUAL VRT_SET_LOOKUP_BINTREE
+))
+    set(VRT_SET_LOOKUP VRT_SET_LOOKUP_LINEAR)
 endif()
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/set.cmake.h ${CMAKE_CURRENT_SOURCE_DIR}/src/set.h)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/set.cmake.h ${CMAKE_CURRENT_SOURCE_DIR}/include/vartype/set.h)
 
 
 # ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
@@ -90,8 +47,7 @@ project(
 
 add_library(
     ${VRT_NAME} STATIC
-    src/var.c
-    src/mem.c
+    src/vrt.c
 )
 set_property(TARGET ${VRT_NAME} PROPERTY LINKER_LANGUAGE C)
 target_include_directories(
