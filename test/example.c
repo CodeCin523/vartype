@@ -3,8 +3,11 @@
 
 int main() {
     // Initialize the vartype library
-    size_t size = 1024; // Example size for the memory allocator
-    VRTresult result = VtInit(size);
+    VRTsetMemory_t memSetting = {
+        .mmapSize = VRT_MB(1),
+        .pageSize = VRT_KB(1)
+    };
+    VRTresult_t result = VRT_Init(memSetting);
     if (result != VRT_RESULT_SUCCESS) {
         fprintf(stderr, "Failed to initialize vartype library: %u\n", result);
         return 1;
@@ -12,7 +15,7 @@ int main() {
 
     // Register a new page using the default page 0
     VRTpage_t page;
-    result = VtRegisterPage(0, "MyPage", &page);
+    result = VRT_RegisterPage(0, "MyPage", &page);
     if (result != VRT_RESULT_SUCCESS) {
         fprintf(stderr, "Failed to register page: %u\n", result);
         return 1;
@@ -22,7 +25,7 @@ int main() {
     // Register a variable in the registered page
     VRTvar_t myVar;
     int myData = 42; // Example data to store
-    result = VtRegisterVar(page, "myVariable", sizeof(myData), &myVar);
+    result = VRT_RegisterVar(page, "myVariable", sizeof(myData), &myVar);
     if (result != VRT_RESULT_SUCCESS) {
         fprintf(stderr, "Failed to register variable: %u\n", result);
         return 1;
@@ -31,7 +34,7 @@ int main() {
 
     // Find the registered variable
     VRTvar_t foundVar;
-    result = VtFindVar(page, "myVariable", &foundVar);
+    result = VRT_FindVar(page, "myVariable", &foundVar);
     if (result != VRT_RESULT_SUCCESS) {
         fprintf(stderr, "Failed to find variable: %u\n", result);
         return 1;
@@ -40,7 +43,7 @@ int main() {
 
     // Access the data of the registered variable
     void *data;
-    result = VtGetData(foundVar, &data);
+    result = VRT_GetData(foundVar, &data);
     if (result != VRT_RESULT_SUCCESS) {
         fprintf(stderr, "Failed to get data for variable: %u\n", result);
         return 1;

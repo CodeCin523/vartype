@@ -12,7 +12,7 @@ char *names[] = {
 };
 
 int main(int argc, char **argv) {
-    VRTresult res = 0;
+    VRTresult_t res = 0;
     nameid_t id = 0;
     struct namedt dt = {
         .nameLCount = 0,
@@ -28,7 +28,7 @@ int main(int argc, char **argv) {
     for(int i = 0; i < 4; ++i) {
         res = namedt_Push(&dt, names[i], NULL);
         if(res != VRT_RESULT_SUCCESS) {
-            printf("Error pushing %s : %s\n", names[i], VtStrError(res));
+            printf("Error pushing %s : %s\n", names[i], VRT_StrResult(res));
             return 1;
         }
     }

@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 int main(int argc, char **argv) {
-    VRTresult res = 0;
+    VRTresult_t res = 0;
     struct allocdt dt = {
         .dataCount = 4, // Represents the LEFT_MOST bit of the size, currently set to 16 bytes.
         .dataPool = NULL,

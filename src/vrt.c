@@ -1,5 +1,3 @@
-#include <vartype/set.h>
-
 #include <vartype/vrt.h>
 #include <vartype/strresult.h>
 
@@ -43,7 +41,7 @@ static inline uint8_t FIND_LEFTMOST_BIT(uint64_t x) {
 #endif
 }
 
-static inline VRTresult allocdt_offcCheck(
+static inline VRTresult_t allocdt_offcCheck(
     struct allocdt *dt
 ) {
     if(dt->offsetLCount >= dt->offsetPCount) {
@@ -63,7 +61,7 @@ static inline VRTresult allocdt_offcCheck(
     }
     return VRT_RESULT_SUCCESS;
 }
-static inline VRTresult allocdt_offDivide(
+static inline VRTresult_t allocdt_offDivide(
     struct allocdt *dt,
     uint8_t *first
 ) {
@@ -83,7 +81,7 @@ static inline VRTresult allocdt_offDivide(
     ++dt->offsetLCount;
     return VRT_RESULT_SUCCESS;
 }
-static inline VRTresult allocdt_offCombine(
+static inline VRTresult_t allocdt_offCombine(
     struct allocdt *dt,
     int i
 ) {
@@ -137,7 +135,7 @@ static inline uint32_t allocdt_Alloc(
     dt->offsetPool[i] |= 0b10000000;
     return ptr;
 }
-static inline VRTresult allocdt_Free(
+static inline VRTresult_t allocdt_Free(
     struct allocdt *dt,
     uint32_t addr
 ) {
@@ -203,7 +201,7 @@ static struct namedt {
     nameid_t nameLCount;
 };
 
-static inline VRTresult namedt_Push(
+static inline VRTresult_t namedt_Push(
     struct namedt *dt,
     const char *name, void *ref
 ) {
@@ -223,7 +221,7 @@ static inline VRTresult namedt_Push(
 
     return VRT_RESULT_SUCCESS;
 }
-static inline VRTresult namedt_Pull(
+static inline VRTresult_t namedt_Pull(
     struct namedt *dt,
     nameid_t id
 ) {
@@ -246,7 +244,7 @@ static inline VRTresult namedt_Pull(
     return VRT_RESULT_SUCCESS;
 }
 
-static inline VRTresult namedt_Find(
+static inline VRTresult_t namedt_Find(
     struct namedt *dt, 
     const char *name,
     nameid_t *id
@@ -303,7 +301,7 @@ struct pagedt {
     uint64_t offsetLCount;
 };
 
-static inline VRTresult pagedt_Init(struct pagedt *dt) {
+static inline VRTresult_t pagedt_Init(struct pagedt *dt) {
     return VRT_RESULT_SUCCESS;
 }
 
@@ -322,19 +320,25 @@ static VRTpage_t pageHierarchyLCount;
 static VRTpage_t pageHierarchyPCount;
 
 
-VRTresult VRT_Init(
-    const VRTpage_t _pageMaxCount
+VRTresult_t VRT_Init(
+    const VRTsetMemory_t _mem
 ) {
-#if 0==0
-    pPageHierarchy = (struct pageHierachy *) calloc(_pageMaxCount, sizeof(struct pageHierachy));
-    if(pPageHierarchy == NULL)
-        return VRT_RESULT_LACK_SPACE;
-#endif
-
-    return VRT_RESULT_SUCCESS;
+    
 }
+// VRTresult_t VRT_Init(
+//     const VRTpage_t _pageMaxCount
+// ) {
+// #if 0==0
+//     pPageHierarchy = (struct pageHierachy *) calloc(_pageMaxCount, sizeof(struct pageHierachy));
+//     if(pPageHierarchy == NULL)
+//         return VRT_RESULT_LACK_SPACE;
+// #endif
+// 
+//     return VRT_RESULT_SUCCESS;
+// }
 
-VRTresult VRT_RegisterPage(
+
+VRTresult_t VRT_RegisterPage(
     const VRTpage_t _page, const char *const _name,
     VRTpage_t *p
 ) {
@@ -346,7 +350,7 @@ VRTresult VRT_RegisterPage(
 
     return VRT_RESULT_SUCCESS;
 }
-VRTresult VRT_RegisterVar(
+VRTresult_t VRT_RegisterVar(
     const VRTpage_t _page, const char *const _name, const uint16_t uCount,
     VRTvar_t *v
 ) {
@@ -356,7 +360,7 @@ VRTresult VRT_RegisterVar(
     return VRT_RESULT_SUCCESS;
 }
 
-VRTresult VRT_FindPage(
+VRTresult_t VRT_FindPage(
     const VRTpage_t _page, const char *const _name,
     VRTpage_t *p
 ) {
@@ -365,7 +369,7 @@ VRTresult VRT_FindPage(
 
     return VRT_RESULT_SUCCESS;
 }
-VRTresult VRT_FindVar(
+VRTresult_t VRT_FindVar(
     const VRTpage_t _page, const char *const _name,
     VRTvar_t *v
 ) {
@@ -374,33 +378,33 @@ VRTresult VRT_FindVar(
     return VRT_RESULT_SUCCESS;
 }
 
-VRTresult VRT_GetPParent(
+VRTresult_t VRT_GetPParent(
     const VRTpage_t _child,
     VRTpage_t *page
 ) {
     return VRT_RESULT_SUCCESS;
 }
-VRTresult VRT_GetPChild(
+VRTresult_t VRT_GetPChild(
     const VRTpage_t _parent, const uint64_t _offset,
     VRTpage_t *page
 ) {
     return VRT_RESULT_SUCCESS;
 }
 
-VRTresult VRT_GetVParent(
+VRTresult_t VRT_GetVParent(
     const VRTvar_t _child,
     VRTpage_t *page
 ) {
     return VRT_RESULT_SUCCESS;
 }
-VRTresult VRT_GetVChild(
+VRTresult_t VRT_GetVChild(
     const VRTpage_t _parent, const uint64_t _offset,
     VRTvar_t *var
 ) {
     return VRT_RESULT_SUCCESS;
 }
 
-VRTresult VRT_GetData(
+VRTresult_t VRT_GetData(
     const VRTvar_t _var,
     void **data
 ) {
@@ -421,7 +425,7 @@ static const char * const errname[] = {
     "Registered in parent",                // VRT_RESULT_REGISTERED_IN_PARENT
     "Registered in child"                  // VRT_RESULT_REGISTERED_IN_CHILD
 };
-const char *const VRT_StrResult(VRTresult _r) {
+const char *const VRT_StrResult(VRTresult_t _r) {
     if(_r > 9) return NULL;
     return errname[_r];
 }

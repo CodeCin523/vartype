@@ -6,7 +6,7 @@ extern "C" {
 
 #include "vrt.h"
 
-const char *const VRT_StrResult(VRTresult _r);
+const char *const VRT_StrResult(VRTresult_t _r);
 
 #ifdef __cplusplus
 };
