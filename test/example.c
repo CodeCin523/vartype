@@ -5,7 +5,8 @@ int main() {
     // Initialize the vartype library
     VRTsetMemory_t memSetting = {
         .mmapSize = VRT_MB(1),
-        .pageSize = VRT_KB(1)
+        .pageSize = VRT_KB(1),
+        .pageCount = 16
     };
     VRTresult_t result = VRT_Init(memSetting);
     if (result != VRT_RESULT_SUCCESS) {

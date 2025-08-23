@@ -286,32 +286,34 @@ static inline VRTresult_t namedt_Find(
     return VRT_RESULT_FAILED;
 }
 
-
-// // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
-// // PAGE DATA
-// // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
+// ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
+// PAGE DATA
+// ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 struct pagedt {
-    struct namedt n;
-
-    uint8_t *pData;
-    uint64_t dataSize;
-
-    uint8_t *pOffset;
-    uint64_t offsetPCount;
-    uint64_t offsetLCount;
+    struct allocdt  alloc;
+    struct namedt   name;
 };
-
-static inline VRTresult_t pagedt_Init(struct pagedt *dt) {
-    return VRT_RESULT_SUCCESS;
-}
-
 
 // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 // INTERFACE
 // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
-static struct namedt pageNames;
+#ifdef _WIN64
+#include <sysinfoapi.h>
+#include <memoryapi.h>
 
+#define VRT_OS_WIN
+#elif defined(__linux__)
+#include <mmap.h>
+
+#define VRT_OS_LIN
+#endif
+
+
+static VRTsetMemory_t setMemory;
+
+static struct namedt pageNames;
 static struct pagedt *pPageData;
+
 static struct pageHierachy {
     VRTpage_t i;     // index
     VRTpage_t cc;    // child count
@@ -323,20 +325,31 @@ static VRTpage_t pageHierarchyPCount;
 VRTresult_t VRT_Init(
     const VRTsetMemory_t _mem
 ) {
-    
-}
-// VRTresult_t VRT_Init(
-//     const VRTpage_t _pageMaxCount
-// ) {
-// #if 0==0
-//     pPageHierarchy = (struct pageHierachy *) calloc(_pageMaxCount, sizeof(struct pageHierachy));
-//     if(pPageHierarchy == NULL)
-//         return VRT_RESULT_LACK_SPACE;
-// #endif
-// 
-//     return VRT_RESULT_SUCCESS;
-// }
+    setMemory = _mem;
+#ifdef VRT_OS_WIN
+    SYSTEM_INFO info = {0};
+    GetSystemInfo(&info);
 
+    // REALLY TEMPORARY, NOTHING HERE SHOULD BE FINAL
+    setMemory.mmapSize = _mem.mmapSize - _mem.mmapSize % info.dwPageSize;
+    setMemory.pageSize = 1<<FIND_LEFTMOST_BIT(_mem.pageSize);
+#elif defined(VRT_OS_LIN)
+#endif
+
+    pageNames.namePCount = setMemory.pageCount;
+    pageNames.nameLCount = 0;
+    pageNames.pRef = (struct nameref *) calloc(setMemory.pageCount, sizeof(struct nameref));
+    if(pageNames.pRef == NULL)
+        return VRT_RESULT_LACK_SPACE;
+
+    pageHierarchyPCount = setMemory.pageCount;
+    pageHierarchyLCount = 0;
+    pPageHierarchy = (struct pageHierachy *) calloc(setMemory.pageCount, sizeof(struct pageHierachy));
+    if(pPageHierarchy == NULL)
+        return VRT_RESULT_LACK_SPACE;
+
+    return VRT_RESULT_SUCCESS;
+}
 
 VRTresult_t VRT_RegisterPage(
     const VRTpage_t _page, const char *const _name,

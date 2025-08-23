@@ -18,6 +18,7 @@
 typedef struct VRTsetMemory {
     uint64_t mmapSize;  // mmap size
     uint64_t pageSize;  // page size
+    uint64_t pageCount; // page count
 
 #if VRT_SET_STRCMP == VRT_SET_STRCMP_CHAR
     uint64_t nameSize;  // name mmap size
