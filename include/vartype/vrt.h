@@ -29,6 +29,7 @@ typedef uint32_t VRTresult_t;
 #define VRT_RESULT_REGISTERED_LOCALLY   6
 #define VRT_RESULT_REGISTERED_IN_PARENT 7
 #define VRT_RESULT_REGISTERED_IN_CHILD  8
+#define VRT_RESULT_INVALID_PARENT       9
 
 
 // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----

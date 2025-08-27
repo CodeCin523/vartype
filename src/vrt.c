@@ -342,6 +342,10 @@ VRTresult_t VRT_Init(
     if(pageNames.pRef == NULL)
         return VRT_RESULT_LACK_SPACE;
 
+    pPageData = (struct pagedt *) calloc(setMemory.pageCount, sizeof(struct pagedt));
+    if(pPageData == NULL)
+        return VRT_RESULT_LACK_SPACE;
+
     pageHierarchyPCount = setMemory.pageCount;
     pageHierarchyLCount = 0;
     pPageHierarchy = (struct pageHierachy *) calloc(setMemory.pageCount, sizeof(struct pageHierachy));
@@ -358,8 +362,41 @@ VRTresult_t VRT_RegisterPage(
     if(p==NULL) return VRT_RESULT_NO_PTR;
     if(_name==NULL) return VRT_RESULT_NO_NAME;
 
-    // Does the name already exist?
-    // Add 
+    nameid_t nid;
+    if(namedt_Find(&pageNames, _name, &nid) == VRT_RESULT_SUCCESS)
+        return VRT_RESULT_REGISTERED_LOCALLY;
+    
+    // Find Index in pPageData
+    int iPD = 0;
+    for(; iPD < setMemory.pageCount; ++iPD)
+        if(pPageData[iPD].alloc.dataPool == NULL) break;
+    if(iPD == setMemory.pageCount) {
+        // either resize or return lack of space
+        return VRT_RESULT_LACK_SPACE;
+    }
+
+    // Find Parent Index in pPageHierarchy
+    if(pageHierarchyLCount == pageHierarchyPCount)
+        return VRT_RESULT_LACK_SPACE;
+    int iPH = 0;                                // IndexParentHierachy
+    for(; iPH < setMemory.pageCount; ++iPH)
+        if(pPageHierarchy[iPH].i == _page) break;
+    if(iPH == setMemory.pageCount) {
+        return VRT_RESULT_INVALID_PARENT;
+    }
+
+    // TODO : Init the iPD
+    pPageData[iPD];
+
+    // Calculate the new Child Index
+    int iCH = iPH + pPageHierarchy[iPH].cc; // IndexChildHierarchy
+    ++pPageHierarchy[iPH].cc;
+    ++pageHierarchyLCount;
+    // Move Hierarchy to place Child
+    memcpy(&pPageHierarchy[iCH+1], &pPageHierarchy[iCH], (iCH - pageHierarchyLCount)*sizeof(struct pageHierachy));
+
+    pPageHierarchy[iCH].i = iPD;
+    pPageHierarchy[iCH].cc = 0;
 
     return VRT_RESULT_SUCCESS;
 }
