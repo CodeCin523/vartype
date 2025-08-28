@@ -1,9 +1,8 @@
-#include <vartype/vrt.h>
+#include <vartype/vartype.h>
 #include <vartype/strresult.h>
 
 #include <stdlib.h>
 #include <string.h>
-
 
 // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 // MEMORY MANAGER
@@ -41,7 +40,7 @@ static inline uint8_t FIND_LEFTMOST_BIT(uint64_t x) {
 #endif
 }
 
-static inline VRTresult_t allocdt_offcCheck(
+static inline VRTresult allocdt_offcCheck(
     struct allocdt *dt
 ) {
     if(dt->offsetLCount >= dt->offsetPCount) {
@@ -61,7 +60,7 @@ static inline VRTresult_t allocdt_offcCheck(
     }
     return VRT_RESULT_SUCCESS;
 }
-static inline VRTresult_t allocdt_offDivide(
+static inline VRTresult allocdt_offDivide(
     struct allocdt *dt,
     uint8_t *first
 ) {
@@ -81,7 +80,7 @@ static inline VRTresult_t allocdt_offDivide(
     ++dt->offsetLCount;
     return VRT_RESULT_SUCCESS;
 }
-static inline VRTresult_t allocdt_offCombine(
+static inline VRTresult allocdt_offCombine(
     struct allocdt *dt,
     int i
 ) {
@@ -135,7 +134,7 @@ static inline uint32_t allocdt_Alloc(
     dt->offsetPool[i] |= 0b10000000;
     return ptr;
 }
-static inline VRTresult_t allocdt_Free(
+static inline VRTresult allocdt_Free(
     struct allocdt *dt,
     uint32_t addr
 ) {
@@ -201,7 +200,7 @@ static struct namedt {
     nameid_t nameLCount;
 };
 
-static inline VRTresult_t namedt_Push(
+static inline VRTresult namedt_Push(
     struct namedt *dt,
     const char *name, void *ref
 ) {
@@ -221,7 +220,7 @@ static inline VRTresult_t namedt_Push(
 
     return VRT_RESULT_SUCCESS;
 }
-static inline VRTresult_t namedt_Pull(
+static inline VRTresult namedt_Pull(
     struct namedt *dt,
     nameid_t id
 ) {
@@ -244,7 +243,7 @@ static inline VRTresult_t namedt_Pull(
     return VRT_RESULT_SUCCESS;
 }
 
-static inline VRTresult_t namedt_Find(
+static inline VRTresult namedt_Find(
     struct namedt *dt, 
     const char *name,
     nameid_t *id
@@ -298,6 +297,7 @@ struct pagedt {
 // INTERFACE
 // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 #ifdef _WIN64
+#include <windows.h>
 #include <sysinfoapi.h>
 #include <memoryapi.h>
 
@@ -309,21 +309,21 @@ struct pagedt {
 #endif
 
 
-static VRTsetMemory_t setMemory;
+static VRTsetMemory setMemory;
 
 static struct namedt pageNames;
 static struct pagedt *pPageData;
 
 static struct pageHierachy {
-    VRTpage_t i;     // index
-    VRTpage_t cc;    // child count
+    VRTpage i;     // index
+    VRTpage cc;    // child count
 } *pPageHierarchy;
-static VRTpage_t pageHierarchyLCount;
-static VRTpage_t pageHierarchyPCount;
+static VRTpage pageHierarchyLCount;
+static VRTpage pageHierarchyPCount;
 
 
-VRTresult_t VRT_Init(
-    const VRTsetMemory_t _mem
+VRTresult VRT_Init(
+    const VRTsetMemory _mem
 ) {
     setMemory = _mem;
 #ifdef VRT_OS_WIN
@@ -355,9 +355,9 @@ VRTresult_t VRT_Init(
     return VRT_RESULT_SUCCESS;
 }
 
-VRTresult_t VRT_RegisterPage(
-    const VRTpage_t _page, const char *const _name,
-    VRTpage_t *p
+VRTresult VRT_RegisterPage(
+    const VRTpage _page, const char *const _name,
+    VRTpage *p
 ) {
     if(p==NULL) return VRT_RESULT_NO_PTR;
     if(_name==NULL) return VRT_RESULT_NO_NAME;
@@ -367,7 +367,7 @@ VRTresult_t VRT_RegisterPage(
         return VRT_RESULT_REGISTERED_LOCALLY;
     
     // Find Index in pPageData
-    int iPD = 0;
+    int iPD = 0; // IndexPageData
     for(; iPD < setMemory.pageCount; ++iPD)
         if(pPageData[iPD].alloc.dataPool == NULL) break;
     if(iPD == setMemory.pageCount) {
@@ -378,7 +378,7 @@ VRTresult_t VRT_RegisterPage(
     // Find Parent Index in pPageHierarchy
     if(pageHierarchyLCount == pageHierarchyPCount)
         return VRT_RESULT_LACK_SPACE;
-    int iPH = 0;                                // IndexParentHierachy
+    int iPH = 0; // IndexParentHierachy
     for(; iPH < setMemory.pageCount; ++iPH)
         if(pPageHierarchy[iPH].i == _page) break;
     if(iPH == setMemory.pageCount) {
@@ -400,9 +400,9 @@ VRTresult_t VRT_RegisterPage(
 
     return VRT_RESULT_SUCCESS;
 }
-VRTresult_t VRT_RegisterVar(
-    const VRTpage_t _page, const char *const _name, const uint16_t uCount,
-    VRTvar_t *v
+VRTresult VRT_RegisterVar(
+    const VRTpage _page, const char *const _name, const uint16_t uCount,
+    VRTvar *v
 ) {
     if(v==NULL) return VRT_RESULT_NO_PTR;
     if(_name==NULL) return VRT_RESULT_NO_NAME;
@@ -410,52 +410,52 @@ VRTresult_t VRT_RegisterVar(
     return VRT_RESULT_SUCCESS;
 }
 
-VRTresult_t VRT_FindPage(
-    const VRTpage_t _page, const char *const _name,
-    VRTpage_t *p
+VRTresult VRT_FindPage(
+    const VRTpage _page, const char *const _name,
+    VRTpage *p
 ) {
     if(p==NULL) return VRT_RESULT_NO_PTR;
     if(_name==NULL) return VRT_RESULT_NO_NAME;
 
     return VRT_RESULT_SUCCESS;
 }
-VRTresult_t VRT_FindVar(
-    const VRTpage_t _page, const char *const _name,
-    VRTvar_t *v
+VRTresult VRT_FindVar(
+    const VRTpage _page, const char *const _name,
+    VRTvar *v
 ) {
     if(v==NULL) return VRT_RESULT_NO_PTR;
     if(_name==NULL) return VRT_RESULT_NO_NAME;
     return VRT_RESULT_SUCCESS;
 }
 
-VRTresult_t VRT_GetPParent(
-    const VRTpage_t _child,
-    VRTpage_t *page
+VRTresult VRT_GetPParent(
+    const VRTpage _child,
+    VRTpage *page
 ) {
     return VRT_RESULT_SUCCESS;
 }
-VRTresult_t VRT_GetPChild(
-    const VRTpage_t _parent, const uint64_t _offset,
-    VRTpage_t *page
-) {
-    return VRT_RESULT_SUCCESS;
-}
-
-VRTresult_t VRT_GetVParent(
-    const VRTvar_t _child,
-    VRTpage_t *page
-) {
-    return VRT_RESULT_SUCCESS;
-}
-VRTresult_t VRT_GetVChild(
-    const VRTpage_t _parent, const uint64_t _offset,
-    VRTvar_t *var
+VRTresult VRT_GetPChild(
+    const VRTpage _parent, const uint64_t _offset,
+    VRTpage *page
 ) {
     return VRT_RESULT_SUCCESS;
 }
 
-VRTresult_t VRT_GetData(
-    const VRTvar_t _var,
+VRTresult VRT_GetVParent(
+    const VRTvar _child,
+    VRTpage *page
+) {
+    return VRT_RESULT_SUCCESS;
+}
+VRTresult VRT_GetVChild(
+    const VRTpage _parent, const uint64_t _offset,
+    VRTvar *var
+) {
+    return VRT_RESULT_SUCCESS;
+}
+
+VRTresult VRT_GetData(
+    const VRTvar _var,
     void **data
 ) {
     return VRT_RESULT_SUCCESS;
@@ -475,7 +475,7 @@ static const char * const errname[] = {
     "Registered in parent",                // VRT_RESULT_REGISTERED_IN_PARENT
     "Registered in child"                  // VRT_RESULT_REGISTERED_IN_CHILD
 };
-const char *const VRT_StrResult(VRTresult_t _r) {
+const char *const VRT_StrResult(VRTresult _r) {
     if(_r > 9) return NULL;
     return errname[_r];
 }

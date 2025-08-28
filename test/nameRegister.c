@@ -1,4 +1,4 @@
-#include "../src/vrt.c"
+#include "../src/vartype.c"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -12,7 +12,7 @@ char *names[] = {
 };
 
 int main(int argc, char **argv) {
-    VRTresult_t res = 0;
+    VRTresult res = 0;
     nameid_t id = 0;
     struct namedt dt = {
         .nameLCount = 0,

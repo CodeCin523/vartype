@@ -66,29 +66,29 @@ This will allow you to use the `vartype` library in your project without needing
 
  Name|Description|
 |--|--|
-|`VRTpage_t`|Represents a page identifier.|
-|`VRTvar_t`|Structure representing a variable with its address, page, and size.|
-|`VRTresult_t`|Represents either an error or a valid state.|
+|`VRTpage`|Represents a page identifier.|
+|`VRTvar`|Structure representing a variable with its address, page, and size.|
+|`VRTresult`|Represents either an error or a valid state.|
 
 ### Functions
 
 |Name|Description|
 |--|--|
 |<div style="text-align: center;">**Initialization**</div>|
-|`VRTresult_t VRT_Init()`| Initializes the library.|
+|`VRTresult VRT_Init()`| Initializes the library.|
 |<div style="text-align: center;">**Register**</div>|
-|`VRTresult_t VRT_RegisterPage(`<br>`const VRTpage_t _page, const char *const _name,`<br>`VRTpage_t *p)`|Registers a new page.|
-|`VRTresult_t VRT_RegisterVar(`<br>`const VRTpage_t _page, const char *const _name, const uint16_t uCount,`<br>`VRTvar_t *v)` |Registers a variable in a specified page.|
+|`VRTresult VRT_RegisterPage(`<br>`const VRTpage _page, const char *const _name,`<br>`VRTpage *p)`|Registers a new page.|
+|`VRTresult VRT_RegisterVar(`<br>`const VRTpage _page, const char *const _name, const uint16_t uCount,`<br>`VRTvar *v)` |Registers a variable in a specified page.|
 |<div style="text-align: center;">**Find**</div>|
-|`VRTresult_t VRT_FindPage(`<br>`const VRTpage_t _page, const char *const _name,`<br>`VRTpage_t *p)`|Finds a page by its name and retrieves its identifier.|
-|`VRTresult_t VRT_FindVar(`<br>`const VRTpage_t _page, const char *const _name,`<br>`VRTvar_t *v)`|Finds a variable by its name and retrieves its details.|
-|`VRTresult_t VRT_GetPParent(`<br>`const VRTpage_t _child,`<br>`VRTpage_t *page)`|Retrieves the parent page of a specified child page.|
+|`VRTresult VRT_FindPage(`<br>`const VRTpage _page, const char *const _name,`<br>`VRTpage *p)`|Finds a page by its name and retrieves its identifier.|
+|`VRTresult VRT_FindVar(`<br>`const VRTpage _page, const char *const _name,`<br>`VRTvar *v)`|Finds a variable by its name and retrieves its details.|
+|`VRTresult VRT_GetPParent(`<br>`const VRTpage _child,`<br>`VRTpage *page)`|Retrieves the parent page of a specified child page.|
 |<div style="text-align: center;">**Hierarchy**</div>|
-|`VRTresult_t VRT_GetPChild(`<br>`const VRTpage_t _parent, const uint64_t _offset,`<br>`VRTpage_t *page)`|Retrieves the child page at a specified offset from a parent page.|
-|`VRTresult_t VRT_GetVParent(`<br>`const VRTvar_t _child`<br>`VRTpage_t *page)`|Retrieves the parent page of a specified variable.|
-|`VRTresult_t VRT_GetVChild(`<br>`const VRTpage_t _parent, const uint64_t _offset,`<br>`VRTvar_t *var)`|Retrieves the var at a specified offset from a parent page.|
+|`VRTresult VRT_GetPChild(`<br>`const VRTpage _parent, const uint64_t _offset,`<br>`VRTpage *page)`|Retrieves the child page at a specified offset from a parent page.|
+|`VRTresult VRT_GetVParent(`<br>`const VRTvar _child`<br>`VRTpage *page)`|Retrieves the parent page of a specified variable.|
+|`VRTresult VRT_GetVChild(`<br>`const VRTpage _parent, const uint64_t _offset,`<br>`VRTvar *var)`|Retrieves the var at a specified offset from a parent page.|
 |<div style="text-align: center;">**Data**</div>|
-|`VRTresult_t VRT_GetData(`<br>`const VRTvar_t _var,`<br>`void **data)`|Retrieves the data associated with a specified variable.|
+|`VRTresult VRT_GetData(`<br>`const VRTvar _var,`<br>`void **data)`|Retrieves the data associated with a specified variable.|
 
 ## License
 

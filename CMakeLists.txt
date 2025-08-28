@@ -47,7 +47,7 @@ project(
 
 add_library(
     ${VRT_NAME} STATIC
-    src/vrt.c
+    src/vartype.c
 )
 set_property(TARGET ${VRT_NAME} PROPERTY LINKER_LANGUAGE C)
 target_include_directories(

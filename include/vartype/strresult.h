@@ -4,9 +4,9 @@
 extern "C" {
 #endif
 
-#include "vrt.h"
+#include "vartype.h"
 
-const char *const VRT_StrResult(VRTresult_t _r);
+const char *const VRT_StrResult(VRTresult _r);
 
 #ifdef __cplusplus
 };

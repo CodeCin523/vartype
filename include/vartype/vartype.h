@@ -1,25 +1,23 @@
 #ifndef __VRT_H__
 #define __VRT_H__
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #include "set.h"
 
-
 // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 // TYPES
 // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
-typedef uint16_t VRTpage_t;
+typedef uint16_t VRTpage;
 
 typedef struct VRTvar {
     uint32_t   addr;
-    VRTpage_t  page;
+    VRTpage  page;
     uint16_t uCount;
-} VRTvar_t;
+} VRTvar;
 
-typedef uint32_t VRTresult_t;
+typedef uint32_t VRTresult;
 #define VRT_RESULT_SUCCESS              0
 #define VRT_RESULT_FAILED               1
 #define VRT_RESULT_NO_PTR               2
@@ -31,52 +29,51 @@ typedef uint32_t VRTresult_t;
 #define VRT_RESULT_REGISTERED_IN_CHILD  8
 #define VRT_RESULT_INVALID_PARENT       9
 
-
 // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 // FUNCTIONS
 // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
-VRTresult_t VRT_Init(
-    const VRTsetMemory_t _mem
+VRTresult VRT_Init(
+    const VRTsetMemory _mem
 );
 
-VRTresult_t VRT_RegisterPage(
-    const VRTpage_t _page, const char *const _name,
-    VRTpage_t *p
+VRTresult VRT_RegisterPage(
+    const VRTpage _page, const char *const _name,
+    VRTpage *p
 );
-VRTresult_t VRT_RegisterVar(
-    const VRTpage_t _page, const char *const _name, const uint16_t uCount,
-    VRTvar_t *v
-);
-
-VRTresult_t VRT_FindPage(
-    const VRTpage_t _page, const char *const _name,
-    VRTpage_t *p
-);
-VRTresult_t VRT_FindVar(
-    const VRTpage_t _page, const char *const _name,
-    VRTvar_t *v
+VRTresult VRT_RegisterVar(
+    const VRTpage _page, const char *const _name, const uint16_t uCount,
+    VRTvar *v
 );
 
-VRTresult_t VRT_GetPParent(
-    const VRTpage_t _child,
-    VRTpage_t *page
+VRTresult VRT_FindPage(
+    const VRTpage _page, const char *const _name,
+    VRTpage *p
 );
-VRTresult_t VRT_GetPChild(
-    const VRTpage_t _parent, const uint64_t _offset,
-    VRTpage_t *page
-);
-
-VRTresult_t VRT_GetVParent(
-    const VRTvar_t _child,
-    VRTpage_t *page
-);
-VRTresult_t VRT_GetVChild(
-    const VRTpage_t _parent, const uint64_t _offset,
-    VRTvar_t *var
+VRTresult VRT_FindVar(
+    const VRTpage _page, const char *const _name,
+    VRTvar *v
 );
 
-VRTresult_t VRT_GetData(
-    const VRTvar_t _var,
+VRTresult VRT_GetPParent(
+    const VRTpage _child,
+    VRTpage *page
+);
+VRTresult VRT_GetPChild(
+    const VRTpage _parent, const uint64_t _offset,
+    VRTpage *page
+);
+
+VRTresult VRT_GetVParent(
+    const VRTvar _child,
+    VRTpage *page
+);
+VRTresult VRT_GetVChild(
+    const VRTpage _parent, const uint64_t _offset,
+    VRTvar *var
+);
+
+VRTresult VRT_GetData(
+    const VRTvar _var,
     void **data
 );
 
@@ -84,5 +81,4 @@ VRTresult_t VRT_GetData(
 #ifdef __cplusplus
 };
 #endif
-
 #endif

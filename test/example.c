@@ -1,21 +1,21 @@
 #include <stdio.h>
-#include <vartype/vrt.h>
+#include <vartype/vartype.h>
 
 int main() {
     // Initialize the vartype library
-    VRTsetMemory_t memSetting = {
+    VRTsetMemory memSetting = {
         .mmapSize = VRT_MB(1),
         .pageSize = VRT_KB(1),
         .pageCount = 16
     };
-    VRTresult_t result = VRT_Init(memSetting);
+    VRTresult result = VRT_Init(memSetting);
     if (result != VRT_RESULT_SUCCESS) {
         fprintf(stderr, "Failed to initialize vartype library: %u\n", result);
         return 1;
     }
 
     // Register a new page using the default page 0
-    VRTpage_t page;
+    VRTpage page;
     result = VRT_RegisterPage(0, "MyPage", &page);
     if (result != VRT_RESULT_SUCCESS) {
         fprintf(stderr, "Failed to register page: %u\n", result);
@@ -24,7 +24,7 @@ int main() {
     printf("Registered page: %u\n", page);
 
     // Register a variable in the registered page
-    VRTvar_t myVar;
+    VRTvar myVar;
     int myData = 42; // Example data to store
     result = VRT_RegisterVar(page, "myVariable", sizeof(myData), &myVar);
     if (result != VRT_RESULT_SUCCESS) {
@@ -34,7 +34,7 @@ int main() {
     printf("Registered variable: %s\n", "myVariable");
 
     // Find the registered variable
-    VRTvar_t foundVar;
+    VRTvar foundVar;
     result = VRT_FindVar(page, "myVariable", &foundVar);
     if (result != VRT_RESULT_SUCCESS) {
         fprintf(stderr, "Failed to find variable: %u\n", result);

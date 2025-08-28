@@ -23,7 +23,7 @@ typedef struct VRTsetMemory {
 #if VRT_SET_STRCMP == VRT_SET_STRCMP_CHAR
     uint64_t nameSize;  // name mmap size
 #endif
-} VRTsetMemory_t;
+} VRTsetMemory;
 
 #endif
 
