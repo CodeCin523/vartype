@@ -1,4 +1,4 @@
-# vartype
+# vartype (or shitty database)
 
 `vartype` is a lightweight memory allocator library that allows you to access variables from anywhere in your application, as long as you have the correct name and page. This library is designed to simplify variable management in complex systems, enabling efficient memory usage and easy variable retrieval.
 

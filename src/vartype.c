@@ -4,11 +4,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+static VRTsetMemory setMemory;
+
 // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 // MEMORY MANAGER
 // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 static struct allocdt {
-    uint8_t *dataPool;
+    uint8_t *dataPool; // might be removed
 
     uint8_t *offsetPool;
 
@@ -55,6 +57,7 @@ static inline VRTresult allocdt_offcCheck(
             free(dt->offsetPool);
         }
 #else
+        return VRT_RESULT_LACK_SPACE;
 #endif
         dt->offsetPool = temp;
     }
@@ -172,6 +175,27 @@ static inline VRTresult allocdt_Free(
     return VRT_RESULT_ADDR_NOT_FOUND;
 }
 
+static inline VRTresult allocdt_AddMem(
+    struct allocdt *dt,
+    uint8_t s
+) {
+    allocdt_offcCheck(dt);
+
+    dt->offsetPool[dt->offsetLCount++] = s;
+    return VRT_RESULT_SUCCESS;
+}
+static inline VRTresult allocdt_RemMem(
+    struct allocdt *dt,
+    uint8_t s
+) {
+    // check when collapsing if we have removed a hole page of memory, send flag back.
+    if(dt->offsetPool[dt->offsetLCount-1] == s) {
+        dt->offsetPool[dt->offsetLCount--] = 0;
+        return VRT_RESULT_SUCCESS;
+    }
+    return VRT_RESULT_FAILED;
+}
+
 // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 // NAME REGISTER
 // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
@@ -179,7 +203,7 @@ typedef int64_t nameid_t;
 
 static struct nameref {
     const char *n;
-    void *ref;
+    void *ref;  // switch to uint32_t maybe
 };
 
 static int nameref_comp(const void *a, const void *b) {
@@ -288,10 +312,48 @@ static inline VRTresult namedt_Find(
 // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 // PAGE DATA
 // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
+static struct vpagedt {
+    void *addr;
+} *pVirtualPages;
+static uint32_t virtualPageLCount;
+static uint32_t virtualPagePCount;
+
 struct pagedt {
     struct allocdt  alloc;
     struct namedt   name;
-};
+
+    struct vpagedt *addrs;
+    uint32_t addr_count;
+} *pPagedts;
+
+
+VRTresult pagedt_AddVpagedt(
+    
+) {
+    // MOVE ARRAY
+    // for(int i = i; i < end-1; ++i)
+    //     pVirtualPages[i+1] = pVirtualPages[i];
+    memcpy(
+
+    )
+
+    // GET PAGE
+    // void *addr = VirtualPage(size);
+
+    // PLACE NEW PAGE
+    // pVirtualPages[i] = {addr};
+    // pPagedts[i]
+    // ++addr_count;
+}
+VRTresult pagedt_GetData() {
+    
+}
+// namedt.pRef
+//  array of reference
+// allocdt.dataPool
+//  VirtualPages
+//   not reserved into the allocdt, but abstraction.
+// allocdt.offsetPool
 
 // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 // INTERFACE
@@ -308,8 +370,6 @@ struct pagedt {
 #define VRT_OS_LIN
 #endif
 
-
-static VRTsetMemory setMemory;
 
 static struct namedt pageNames;
 static struct pagedt *pPageData;
@@ -460,6 +520,14 @@ VRTresult VRT_GetData(
 ) {
     return VRT_RESULT_SUCCESS;
 }
+
+// VRTresult VRT_GC() {
+//     // CLEAN WHAT CAN BE CLEAN
+// }
+// VRTresult VRT_Reset() {
+//     // RESET EVERY ADDR AND REMOVE HOLES IN MEMORY.
+//     // EVERY VAR IS NOW INVALID
+// }
 
 // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 // STRING ERROR
