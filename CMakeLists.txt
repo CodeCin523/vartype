@@ -5,9 +5,9 @@ cmake_minimum_required(VERSION 3.10)
 # STATIC VARIABLES
 # ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 set(VRT_NAME vartype)
-set(VRT_VERSION_MAJOR 1)
+set(VRT_VERSION_MAJOR 2)
 set(VRT_VERSION_MINOR 0)
-set(VRT_VERSION_PATCH 1)
+set(VRT_VERSION_PATCH 0)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
