@@ -9,7 +9,12 @@
 //      - offset arrays, page arrays
 //  - data
 //  - names
+#include <sys/mman.h>
 
+static void **pMemGeneral = NULL;
+sta
+
+static FORCE_INLINE void *
 
 VRTresult VRT_RegisterPage(
     const VRTpage _parent, const char *const _name,

@@ -27,7 +27,7 @@ static FORCE_INLINE VRTsize STINL_ByteToSize(uint64_t b) {
     return pos; // 0-based
 #endif
 }
-static FORCE_INLINE STINL_SizeToByte(VRTsize s) {
+static FORCE_INLINE uint64_t STINL_SizeToByte(VRTsize s) {
     return 1 << s;
 }
 

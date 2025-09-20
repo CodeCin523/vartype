@@ -7,6 +7,7 @@ include/vartype/set.h
 
 src/tmpl.c
 src/mem.c
+src/set.h
 
 compile_commands.json
 README.test.md
