@@ -9,15 +9,24 @@ extern "C" {
 #undef VRT_OFFSET_NOFUNC
 
 
+// Virtual Memory Page Manager
 typedef struct VRTmem {
     VRToffset offset;
-    void *pMem;
+    void **pMem;
     VRToffsetAddr length;
 } VRTmem;
 
 
 #ifndef VRT_MEM_NOFUNC
-
+VRTresult VRTmem_Alloc(
+    VRTmem *mem,
+    const size_t _size,
+    void **addr
+);
+VRTresult VRTmem_Free(
+    VRTmem *mem,
+    void *addr
+);
 #endif
 
 

@@ -4,6 +4,7 @@
 
 #include <string.h>
 
+
 #define VRT_OFFSET_INVALID UINT32_MAX
 
 
@@ -155,8 +156,6 @@ VRTresult VRToffset_Alloc(
     const VRTsize _size,
     VRToffsetAddr *addr
 ) {
-    if(addr == NULL)
-        return VRT_RESULT_CALL_NO_PTR;
     {   // STINLoffset_CHECK
         const VRTresult _res = STINLoffset_CHECK(offset);
         if(_res != VRT_RESULT_SUCCESS && _res != VRT_RESULT_MEM_NO_SPACE)
