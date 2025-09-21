@@ -15,7 +15,7 @@ typedef uint32_t VRToffsetAddr;
 typedef struct VRToffset {
     VRTsize *pool;
     VRToffsetAddr count;
-    VRToffsetAddr size;
+    VRToffsetAddr length;
 } VRToffset;
 
 #ifndef VRT_NOFUNC

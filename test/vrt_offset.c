@@ -7,10 +7,9 @@
 void main() {
     VRToffset offset = {0};
 
-    VRT_ByteToSize(32, &offset.size);
     offset.pool = malloc(32);
-
-    offset.pool[0] = 4;
+    offset.length = 32;
+    offset.pool[0] = 4; // STINL_ByteToSize of 32
     offset.count = 1;
 
     for(int i = 0; i < offset.count; ++i) {

@@ -15,7 +15,7 @@ static FORCE_INLINE VRTresult STINLoffset_CHECK(
     if(offset->pool == NULL)
         return VRT_RESULT_INVALID_STATE;
 
-    if(offset->count >= offset->size)
+    if(offset->count >= offset->length)
         return VRT_RESULT_MEM_NO_SPACE;
 
     return VRT_RESULT_SUCCESS;
@@ -25,7 +25,7 @@ static FORCE_INLINE VRTresult STINLoffset_Divide(
     VRToffset *offset,
     VRToffsetAddr i
 ) {
-    if(offset->count >= offset->size)
+    if(offset->count >= offset->length)
         return VRT_RESULT_MEM_NO_SPACE;
     
     VRTsize *first = &offset->pool[i];
@@ -130,6 +130,25 @@ static FORCE_INLINE VRTresult STINLoffset_Free(
     return VRT_RESULT_FAILED; //Addr not found
 }
 
+static FORCE_INLINE /* VRTresult */ void STINLoffset_Grow(
+    VRToffset *offset,
+    const VRTsize _size
+) {
+    // if(offset->count >= offset->size)
+    //     return VRT_RESULT_MEM_NO_SPACE;
+    offset->pool[offset->count++] = _size;
+    //return VRT_RESULT_SUCCESS;
+}
+static FORCE_INLINE /* VRTresult */ void STINLoffset_Shrink(
+    VRToffset *offset,
+    const VRTsize _size
+) {
+    // if(offset->pool[offset->count-1] != _size)
+    //     return VRT_RESULT_INVALID_STATE;
+    offset->pool[--offset->count] = 0;
+    //return VRT_RESULT_SUCCESS;
+}
+
 
 VRTresult VRToffset_Alloc(
     VRToffset *offset,
@@ -184,6 +203,11 @@ VRTresult VRToffset_Grow(
             return _res;
     }
 
+    if(offset->count >= offset->length)
+        return VRT_RESULT_MEM_NO_SPACE;
+
+    STINLoffset_Grow(offset, _size);
+
     return VRT_RESULT_FAILED;
 }
 VRTresult VRToffset_Shrink(
@@ -200,6 +224,11 @@ VRTresult VRToffset_Shrink(
         if(_res != VRT_RESULT_SUCCESS)
             return _res;
     }
+
+    if(offset->pool[offset->count-1] != _size)
+        return VRT_RESULT_INVALID_STATE;
+
+    STINLoffset_Shrink(offset, _size);
 
     return VRT_RESULT_FAILED;
 }
