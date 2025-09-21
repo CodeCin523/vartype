@@ -8,6 +8,7 @@ extern "C" {
 #include "vrt_size.h"
 #define VRT_NOFUNC
 #include "vrt_result.h"
+#undef VRT_NOFUNC
 
 typedef uint16_t VRTpage;
 
@@ -17,7 +18,6 @@ typedef struct VRTvar {
     VRTsize     size;
     uint8_t     NaN;
 } VRTvar;
-
 
 #ifndef VRT_NOFUNC
 // VRTresult VRT_Init();

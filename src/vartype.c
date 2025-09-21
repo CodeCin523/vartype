@@ -1,5 +1,5 @@
-#include <vartype/vartype.h>
-#include <vartype/strresult.h>
+// #include <vartype/vartype.h>
+// #include <vartype/strresult.h>
 
 #include <stdlib.h>
 #include <string.h>

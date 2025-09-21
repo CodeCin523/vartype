@@ -1,7 +1,7 @@
 #include <vartype/vrt.h>
 
 #include "vrt_result.c"
-#include "vrt_size.c"
+#include "vrt_offset.c"
 
 
 // 2-3 main mmap allocator:
@@ -9,12 +9,12 @@
 //      - offset arrays, page arrays
 //  - data
 //  - names
-#include <sys/mman.h>
+// #include <sys/mman.h>
 
 static void **pMemGeneral = NULL;
-sta
-
-static FORCE_INLINE void *
+// sta
+// 
+// static FORCE_INLINE void *
 
 VRTresult VRT_RegisterPage(
     const VRTpage _parent, const char *const _name,

@@ -9,6 +9,9 @@ src/tmpl.c
 src/mem.c
 src/set.h
 
+test/memoryManager.c
+test/nameRegister.c
+
 compile_commands.json
 README.test.md
 todo.md

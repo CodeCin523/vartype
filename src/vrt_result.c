@@ -1,5 +1,6 @@
 #include <vartype/vrt_result.h>
 
+
 char *const VRT_StrResult(const VRTresult _r) {
     static const char * const MSG[] = {
         "Success",
