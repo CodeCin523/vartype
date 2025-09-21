@@ -6,6 +6,7 @@ extern "C" {
 
 #include <stdint.h>
 
+
 typedef uint32_t VRTresult;
 #define VRT_RESULT_SUCCESS          0
 #define VRT_RESULT_FAILED           1
@@ -15,11 +16,11 @@ typedef uint32_t VRTresult;
 // #define VRT_RESULT_MEM_NO_ADDR   5
 #define VRT_RESULT_INVALID_STATE    5
 
-#ifndef VRT_NOFUNC
+
+#ifndef VRT_RESULT_NOFUNC
 char *const VRT_StrResult(const VRTresult _r);
-#else
-#undef VRT_NOFUNC
 #endif
+
 
 #ifdef __cplusplus
 };

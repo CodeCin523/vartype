@@ -4,9 +4,10 @@
 extern "C" {
 #endif
 
-#define VRT_NOFUNC
+#define VRT_RESULT_NOFUNC
 #include "vrt_result.h"
-#undef VRT_NOFUNC
+#undef VRT_RESULT_NOFUNC
+
 
 #define VRT_KB(x) (x * 1024)        /* 1024 */
 #define VRT_MB(x) (x * 1048576)     /* 1024 * 1024 */
@@ -14,7 +15,8 @@ extern "C" {
 
 typedef uint8_t VRTsize;
 
-#ifndef VRT_NOFUNC
+
+#ifndef VRT_SIZE_NOFUNC
 VRTresult VRT_ByteToSize(
     uint64_t byte,
     VRTsize *size
@@ -23,9 +25,8 @@ VRTresult VRT_SizeToByte(
     VRTsize size,
     uint64_t *byte
 );
-#else
-#undef VRT_NOFUNC
 #endif
+
 
 #ifdef __cplusplus
 };

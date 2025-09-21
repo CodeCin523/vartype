@@ -4,11 +4,13 @@
 extern "C" {
 #endif
 
-#define VRT_NOFUNC
-#include "vrt_size.h"
-#define VRT_NOFUNC
+#define VRT_RESULT_NOFUNC
 #include "vrt_result.h"
-#undef VRT_NOFUNC
+#undef VRT_RESULT_NOFUNC
+#define VRT_SIZE_NOFUNC
+#include "vrt_size.h"
+#undef VRT_SIZE_NOFUNC
+
 
 typedef uint16_t VRTpage;
 
@@ -19,8 +21,9 @@ typedef struct VRTvar {
     uint8_t     NaN;
 } VRTvar;
 
+
 #ifndef VRT_NOFUNC
-// VRTresult VRT_Init();
+VRTresult VRT_Init();
 
 VRTresult VRT_RegisterPage(
     const VRTpage _parent, const char *const _name,
@@ -65,6 +68,7 @@ VRTresult VRT_GetData(
 #else
 #undef VRT_NOFUNC
 #endif
+
 
 #ifdef __cplusplus
 };

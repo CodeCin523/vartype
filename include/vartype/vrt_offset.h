@@ -4,9 +4,10 @@
 extern "C" {
 #endif
 
-#define VRT_NOFUNC
+#define VRT_SIZE_NOFUNC
 #include "vrt_size.h"
-#undef VRT_NOFUNC
+#undef VRT_SIZE_NOFUNC
+
 
 // Maybe rename it, currently offset address
 typedef uint32_t VRToffsetAddr; 
@@ -18,7 +19,8 @@ typedef struct VRToffset {
     VRToffsetAddr length;
 } VRToffset;
 
-#ifndef VRT_NOFUNC
+
+#ifndef VRT_OFFSET_NOFUNC
 VRTresult VRToffset_Alloc(
     VRToffset *offset,
     const VRTsize _size,
@@ -37,9 +39,8 @@ VRTresult VRToffset_Shrink(
     VRToffset *offset,
     const VRTsize _size
 );
-#else
-#undef VRT_NOFUNC
 #endif
+
 
 #ifdef __cplusplus
 };
