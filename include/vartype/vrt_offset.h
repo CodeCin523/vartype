@@ -9,14 +9,11 @@ extern "C" {
 #undef VRT_SIZE_NOFUNC
 
 
-// Maybe rename it, currently offset address
-typedef uint32_t VRToffsetAddr; 
-
 // Maybe rename it to VRToffsetBuffer / VRToffsetInfo / VRToffsetData
 typedef struct VRToffset {
     VRTsize *pool;
-    VRToffsetAddr count;
-    VRToffsetAddr length;
+    uint32_t count;
+    uint32_t length;
 } VRToffset;
 
 
@@ -24,11 +21,11 @@ typedef struct VRToffset {
 VRTresult VRToffset_Alloc(
     VRToffset *offset,
     const VRTsize _size,
-    VRToffsetAddr *addr
+    size_t *addr
 );
 VRTresult VRToffset_Free(
     VRToffset *offset,
-    VRToffsetAddr addr
+    size_t addr
 );
 
 VRTresult VRToffset_Grow(

@@ -19,7 +19,7 @@ void main() {
 
     // Allocate 1 BYTE
     printf("Starting memory allocation for 1 byte...\n");
-    VRToffsetAddr p1;
+    size_t p1;
     VRToffset_Alloc(&offset, 0 /*Value 1 in VRTsize*/, &p1);  // Reserve 1 byte.
     if(p1 != 0) {
         printf("Allocation failed for 1 byte at expected offset. Actual offset: %d\n", p1);
@@ -35,7 +35,7 @@ void main() {
 
     // Allocate 2 BYTES
     printf("Starting memory allocation for 2 bytes...\n");
-    VRToffsetAddr p2;
+    size_t p2;
     VRToffset_Alloc(&offset, 1 /*Value 2 in VRTsize*/, &p2);  // Reserve 1 byte.
     if(p2 != 2) {
         printf("Allocation failed for 2 bytes at expected offset. Actual offset: %d\n", p2);
