@@ -1,7 +1,9 @@
 #include <vartype/vrt_result.h>
 
+#include <stddef.h>
 
-char *const VRT_StrResult(const VRTresult _r) {
+
+const char *VRT_StrResult(const VRTresult _r) {
     static const char * const MSG[] = {
         "Success",
         "Failed",

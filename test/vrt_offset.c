@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void main() {
+int main() {
     VRToffset offset = {0};
 
     offset.pool = malloc(32);

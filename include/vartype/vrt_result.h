@@ -18,7 +18,7 @@ typedef uint32_t VRTresult;
 
 
 #ifndef VRT_RESULT_NOFUNC
-char *const VRT_StrResult(const VRTresult _r);
+const char * VRT_StrResult(const VRTresult _r);
 #endif
 
 
