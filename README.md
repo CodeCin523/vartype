@@ -44,51 +44,11 @@ To build and install the `vartype` library, follow these steps:
 
 ## Including in Your Project
 
-If you want to include the `vartype` library in your own CMake project, you can do so by using `add_subdirectory` and linking against `${VRT_NAME}`. Here’s a simple example:
+*work in progress.*
 
-1. In your project's `CMakeLists.txt`, add the following lines:
+## API Reference v1
 
-   ```cmake
-   add_subdirectory(path/to/vartype)  # Adjust the path to where the vartype library is located
-   ```
-
-2. Link against the `vartype` library in your target:
-
-   ```cmake
-   target_link_libraries(your_target PRIVATE ${VRT_NAME})
-   ```
-
-This will allow you to use the `vartype` library in your project without needing to manually manage its source files.
-
-## API Reference
-
-### Types
-
- Name|Description|
-|--|--|
-|`VRTpage`|Represents a page identifier.|
-|`VRTvar`|Structure representing a variable with its address, page, and size.|
-|`VRTresult`|Represents either an error or a valid state.|
-
-### Functions
-
-|Name|Description|
-|--|--|
-|<div style="text-align: center;">**Initialization**</div>|
-|`VRTresult VRT_Init()`| Initializes the library.|
-|<div style="text-align: center;">**Register**</div>|
-|`VRTresult VRT_RegisterPage(`<br>`const VRTpage _page, const char *const _name,`<br>`VRTpage *p)`|Registers a new page.|
-|`VRTresult VRT_RegisterVar(`<br>`const VRTpage _page, const char *const _name, const uint16_t uCount,`<br>`VRTvar *v)` |Registers a variable in a specified page.|
-|<div style="text-align: center;">**Find**</div>|
-|`VRTresult VRT_FindPage(`<br>`const VRTpage _page, const char *const _name,`<br>`VRTpage *p)`|Finds a page by its name and retrieves its identifier.|
-|`VRTresult VRT_FindVar(`<br>`const VRTpage _page, const char *const _name,`<br>`VRTvar *v)`|Finds a variable by its name and retrieves its details.|
-|`VRTresult VRT_GetPParent(`<br>`const VRTpage _child,`<br>`VRTpage *page)`|Retrieves the parent page of a specified child page.|
-|<div style="text-align: center;">**Hierarchy**</div>|
-|`VRTresult VRT_GetPChild(`<br>`const VRTpage _parent, const uint64_t _offset,`<br>`VRTpage *page)`|Retrieves the child page at a specified offset from a parent page.|
-|`VRTresult VRT_GetVParent(`<br>`const VRTvar _child`<br>`VRTpage *page)`|Retrieves the parent page of a specified variable.|
-|`VRTresult VRT_GetVChild(`<br>`const VRTpage _parent, const uint64_t _offset,`<br>`VRTvar *var)`|Retrieves the var at a specified offset from a parent page.|
-|<div style="text-align: center;">**Data**</div>|
-|`VRTresult VRT_GetData(`<br>`const VRTvar _var,`<br>`void **data)`|Retrieves the data associated with a specified variable.|
+*work in progress.*
 
 ## License
 
