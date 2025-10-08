@@ -13,7 +13,7 @@ extern "C" {
 typedef struct VRTmem {
     VRToffset offset;
     void **pMem;
-    VRToffsetAddr length;
+    size_t length;
 } VRTmem;
 
 
