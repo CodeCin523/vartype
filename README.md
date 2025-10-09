@@ -13,40 +13,15 @@
 
 ## Installation
 
-To build and install the `vartype` library, follow these steps:
+*work in progress.*
 
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/CodeCin523/vartype.git
-   cd vartype
-   ```
-
-2. Run CMake to configure the project. If you want to generate the test executable, use the `-DVRT_TEST=ON` option:
-
-   ```bash
-   cmake -S . -B _build -DVRT_TEST=ON
-   ```
-
-3. Go in the newly created directory, build the library and the test executable if specified:
-
-   ```bash
-   cd _build
-   make
-   ```
-
-   Alternatively, if you are using msbuild, you can compile the project with:
-
-   ```bash
-   cd _build
-   msbuild vartype.sln
-   ```
+theorically working for sub_directory and find_package.
 
 ## Including in Your Project
 
 *work in progress.*
 
-## API Reference v1
+## API Reference v2
 
 *work in progress.*
 
