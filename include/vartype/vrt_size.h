@@ -6,7 +6,6 @@ extern "C" {
 
 #define VRT_RESULT_NOFUNC
 #include "vrt_result.h"
-#undef VRT_RESULT_NOFUNC
 
 #include <stddef.h>
 
@@ -19,14 +18,18 @@ typedef uint8_t VRTsize;
 
 
 #ifndef VRT_SIZE_NOFUNC
-VRTresult VRT_ByteToSize(
+#include <vartype/export_vartype.h>
+
+VRTresult VARTYPE_EXPORT VRT_ByteToSize(
     size_t byte,
     VRTsize *size
 );
-VRTresult VRT_SizeToByte(
+VRTresult VARTYPE_EXPORT VRT_SizeToByte(
     VRTsize size,
     size_t *byte
 );
+
+#undef VRT_SIZE_NOFUNC
 #endif
 
 

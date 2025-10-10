@@ -6,10 +6,8 @@ extern "C" {
 
 #define VRT_RESULT_NOFUNC
 #include "vrt_result.h"
-#undef VRT_RESULT_NOFUNC
 #define VRT_SIZE_NOFUNC
 #include "vrt_size.h"
-#undef VRT_SIZE_NOFUNC
 
 
 typedef uint16_t VRTpage;
@@ -23,49 +21,33 @@ typedef struct VRTvar {
 
 
 #ifndef VRT_NOFUNC
-VRTresult VRT_Init();
+#include <vartype/export_vartype.h>
 
-VRTresult VRT_RegisterPage(
+VRTresult VARTYPE_EXPORT VRT_Init();
+
+VRTresult VARTYPE_EXPORT VRT_RegisterPage(
     const VRTpage _parent, const char *const _name,
     VRTpage *page
 );
-VRTresult VRT_RegisterVar(
+VRTresult VARTYPE_EXPORT VRT_RegisterVar(
     const VRTpage _parent, const char *const _name,
     VRTvar *var
 );
 
-// VRTresult VRT_GetPParent(
-//     const VRTpage _child,
-//     VRTpage *page
-// );
-// VRTresult VRT_GetPChild(
-//     const VRTpage _parent, const uint64_t _offset,
-//     VRTpage *page
-// );
-
-// VRTresult VRT_GetVParent(
-//     const VRTvar _child,
-//     VRTpage *page
-// );
-// VRTresult VRT_GetVChild(
-//     const VRTpage _parent, const uint64_t _offset,
-//     VRTvar *var
-// );
-
-VRTresult VRT_FindPage(
+VRTresult VARTYPE_EXPORT VRT_FindPage(
     const VRTpage _parent, const char *const _name,
     VRTpage *page
 );
-VRTresult VRT_FindVar(
+VRTresult VARTYPE_EXPORT VRT_FindVar(
     const VRTpage _parent, const char *const _name,
     VRTvar *var
 );
 
-VRTresult VRT_GetData(
+VRTresult VARTYPE_EXPORT VRT_GetData(
     const VRTvar _var,
     void **data
 );
-#else
+
 #undef VRT_NOFUNC
 #endif
 

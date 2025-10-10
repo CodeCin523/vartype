@@ -18,7 +18,11 @@ typedef uint32_t VRTresult;
 
 
 #ifndef VRT_RESULT_NOFUNC
-const char * VRT_StrResult(const VRTresult _r);
+#include <vartype/export_vartype.h>
+
+const char * VARTYPE_EXPORT VRT_StrResult(const VRTresult _r);
+
+#undef VRT_RESULT_NOFUNC
 #endif
 
 
