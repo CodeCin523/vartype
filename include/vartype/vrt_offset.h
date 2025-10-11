@@ -10,9 +10,9 @@ extern "C" {
 
 // Maybe rename it to VRToffsetBuffer / VRToffsetInfo / VRToffsetData
 typedef struct VRToffset {
-    VRTsize *pool;
-    uint32_t count;
-    uint32_t length;
+    VRTsize *pool;      // 8
+    uint32_t count;     // 4
+    uint32_t length;    // 4
 } VRToffset;
 
 

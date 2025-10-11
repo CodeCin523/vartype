@@ -5,18 +5,7 @@
 #include <string.h>
 
 
-// #define mVRToffset_INVALID UINT32_MAX
-
 #define fVRToffset_CHECK_SPACE(o) (o.count < o.length)
-// #define fVRToffset_CHECK(o, r) {            \
-//     r = VRT_RESULT_SUCCESS;                 \
-//     if(offset == NULL)                      \
-//         r = VRT_RESULT_CALL_NO_PTR;         \
-//     else if(offset->pool == NULL)           \
-//         r = VRT_RESULT_INVALID_STATE;       \
-//     else if(!fVRToffset_CHECK_SPACE((*o)))  \
-//         r = VRT_RESULT_MEM_NO_SPACE;        \
-// }
 
 #define fVRToffset_RETURN(o) {              \
     if(o == NULL)                           \
@@ -58,26 +47,6 @@
         _res = VRT_RESULT_SUCCESS;          \
     } else _res = VRT_RESULT_INVALID_STATE; \
 }
-
- 
-// static FORCE_INLINE /* VRTresult */ void STINLoffset_Grow(
-//     VRToffset *offset,
-//     const VRTsize _size
-// ) {
-//     // if(offset->count >= offset->size)
-//     //     return VRT_RESULT_MEM_NO_SPACE;
-//     offset->pool[offset->count++] = _size;
-//     //return VRT_RESULT_SUCCESS;
-// }
-// static FORCE_INLINE /* VRTresult */ void STINLoffset_Shrink(
-//     VRToffset *offset,
-//     const VRTsize _size
-// ) {
-//     // if(offset->pool[offset->count-1] != _size)
-//     //     return VRT_RESULT_INVALID_STATE;
-//     offset->pool[--offset->count] = 0;
-//     //return VRT_RESULT_SUCCESS;
-// }
 
 
 VRTresult VRToffset_Alloc(

@@ -10,9 +10,10 @@ extern "C" {
 
 // Virtual Memory Page Manager
 typedef struct VRTmem {
-    VRToffset offset;
-    void **pMem;
-    size_t length;
+    VRToffset offset;       // 16
+    void **pMem;            // 8
+    uint32_t count;         // 4
+    uint32_t length;        // 4
 } VRTmem;
 
 

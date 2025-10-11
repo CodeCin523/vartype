@@ -1,8 +1,7 @@
 #include <vartype/vrt.h>
 
 #include "vrt_result.c"
-// #include "vrt_mem.c"
-#include "vrt_offset.c"
+#include "vrt_mem.c"
 
 #include <stdlib.h>
 

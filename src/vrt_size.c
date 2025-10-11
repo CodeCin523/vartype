@@ -1,5 +1,6 @@
 #include <vartype/vrt_size.h>
 
+
 // #if defined(_MSC_VER)
 //   #define FORCE_INLINE __forceinline
 // #elif defined(__GNUC__) || defined(__clang__)
@@ -20,7 +21,7 @@
 #define fVRTsize_S2B(s, b) b = 1 << (s & mVRTsize_DATA)
 #ifdef __GNUC__
 // 0 based
-#define fVRTsize_B2S(s, b) s = b == 0? 0 : 63 - __builtin_clzll(byte)
+#define fVRTsize_B2S(s, b) s = b == 0? 0 : 63 - __builtin_clzll(b)
 #else
 // 0 based
 #define fVRTsize_B2S(s, b) {                                \
