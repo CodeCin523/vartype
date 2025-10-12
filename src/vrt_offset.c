@@ -30,7 +30,7 @@
         ++offset->count;                    \
                                             \
         _res = VRT_RESULT_SUCCESS;          \
-    } else _res = VRT_RESULT_MEM_NO_SPACE;  \
+    } else _res = VRT_RESULT_NO_SPACE_IARRAY;\
 }
 
 #define fVRToffset_COMBINE(o, i, _res) {    \
@@ -81,7 +81,7 @@ VRTresult VRToffset_Alloc(
         return VRT_RESULT_SUCCESS;
     }
 
-    return VRT_RESULT_MEM_NO_SPACE;
+    return VRT_RESULT_NO_SPACE_IALLOC;
 }
 VRTresult VRToffset_Free(
     VRToffset *offset,
@@ -135,7 +135,7 @@ VRTresult VRToffset_Grow(
     fVRToffset_RETURN(offset);
     fVRTsize_RETURN(_size);
     if(offset->count >= offset->length)
-        return VRT_RESULT_MEM_NO_SPACE;
+        return VRT_RESULT_NO_SPACE_IARRAY;
 
     // IMPLEMENTATION
     offset->pool[offset->count++] = _size;

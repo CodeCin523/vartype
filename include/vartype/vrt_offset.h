@@ -38,6 +38,9 @@ VRTresult VARTYPE_EXPORT VRToffset_Shrink(
     const VRTsize _size
 );
 
+// VRTresult VARTYPE_EXPORT VRToffset_Optimize(
+//     VRToffset *offset
+// );
 #undef VRT_OFFSET_NOFUNC
 #endif
 
