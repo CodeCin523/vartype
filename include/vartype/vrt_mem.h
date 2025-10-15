@@ -12,7 +12,7 @@ extern "C" {
 typedef struct VRTmem {
     VRToffset offset;       // 16
     void **pMem;            // 8
-    uint32_t count;         // 4
+    // uint32_t count;         // 4
     uint32_t length;        // 4
 } VRTmem;
 

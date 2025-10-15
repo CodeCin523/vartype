@@ -3,10 +3,13 @@
 #include "vartype/vrt_result.h"
 #include "vrt_offset.c"
 
+#include <stdlib.h>
+
 #ifdef _WIN64
 #define VRT_OS_WIN
 #include <memoryapi.h>
 #endif
+
 
 #define mVRTmem_MAP_BYTE 1024
 #define mVRTmem_MAP_SIZE 10
@@ -33,14 +36,32 @@ VRTresult VRTmem_Alloc(
     size_t offsetAddr = 0; 
     VRTresult res = VRToffset_Alloc(&mem->offset, _size, &offsetAddr);
     
-    if(res == VRT_RESULT_NO_SPACE_IARRAY) {
-        // need to size-up mem->offset.pool
-    } else if(res == VRT_RESULT_NO_SPACE_IALLOC) {
-        // need to reserve more space
-        // If no space in pMem. 
-        if(mem->count >= mem->length) {
+    if(res == VRT_RESULT_NO_SPACE_IARRAY) { // Size up mem->offset.pool
+        if(mem->offset.count < mem->offset.length)
+            return VRT_RESULT_INVALID_STATE;
+        
+        mem->offset.length *= 2;
+        VRTsize *temp = calloc(mem->offset.length, sizeof(VRTsize));
+        if(temp == NULL)
+            return VRT_RESULT_NO_SPACE_CALLOC;
+        
+        // if(mem->offset.pool != NULL) 
+        memcpy(temp, mem->offset.pool, mem->offset.count);
+        free(mem->offset.pool);
 
+        mem->offset.pool = temp;
+
+        res = VRToffset_Alloc(&mem->offset, _size, &offsetAddr);
+    } else if(res == VRT_RESULT_NO_SPACE_IALLOC) { // Reserve More Space
+        // If no space in pMem. 
+        void **temp = (void **) calloc(mem->length+1, sizeof(void *));
+        if(temp == NULL)
+            return VRT_RESULT_NO_SPACE_CALLOC;
+        if(mem->pMem != NULL) {
+            memcpy(temp, mem->pMem, mem->length);
+            free(mem->pMem);
         }
+        mem->pMem = temp;
 
         // Reserve new space.
         void *nPage = NULL;
@@ -49,11 +70,10 @@ VRTresult VRTmem_Alloc(
 #endif
         if(nPage == NULL)
             return VRT_RESULT_NO_SPACE_VIRMEM;
+        mem->pMem[mem->length++] = nPage;
 
+        // Retry alloc.
         VRToffset_Grow(&mem->offset, mVRTmem_MAP_SIZE);
-        mem->pMem[mem->count++] = nPage;
-
-        // Retry alloc;
         res = VRToffset_Alloc(&mem->offset, _size, &offsetAddr);
     }
     if(res != VRT_RESULT_SUCCESS)
