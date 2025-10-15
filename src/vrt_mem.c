@@ -7,6 +7,7 @@
 
 #ifdef _WIN64
 #define VRT_OS_WIN
+#include <windows.h>
 #include <memoryapi.h>
 #endif
 
@@ -17,10 +18,19 @@
 #define fVRTmem_RETURN(m) {                 \
     if(m == NULL)                           \
         return VRT_RESULT_CALL_NO_PTR;      \
-    if(m->pMem == NULL)                     \
-        return VRT_RESULT_INVALID_STATE;    \
+    /*if(m->pMem == NULL)                     \
+        return VRT_RESULT_INVALID_STATE;    */\
 }
 
+
+VRTresult VARTYPE_EXPORT VRTmem_Init(
+    VRTmem *mem
+) {
+    mem->offset.length = 10;
+    mem->offset.pool = calloc(mem->offset.length, sizeof(VRTsize));
+    if(mem->offset.pool == NULL)
+        return VRT_RESULT_NO_SPACE_CALLOC;
+}
 
 VRTresult VRTmem_Alloc(
     VRTmem *mem,

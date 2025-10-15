@@ -22,7 +22,7 @@ typedef uint32_t VRTresult;
 #define VRT_RESULT_INVALID_STATE    8
 
 
-#ifndef VRT_RESULT_NOFUNC
+#ifdef VRT_RESULT_NOFUNC
 #include <vartype/export_vartype.h>
 
 const char * VARTYPE_EXPORT VRT_StrResult(const VRTresult _r);

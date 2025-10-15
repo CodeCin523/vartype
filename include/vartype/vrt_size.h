@@ -17,7 +17,7 @@ extern "C" {
 typedef uint8_t VRTsize;
 
 
-#ifndef VRT_SIZE_NOFUNC
+#ifdef VRT_SIZE_NOFUNC
 #include <vartype/export_vartype.h>
 
 VRTresult VARTYPE_EXPORT VRT_ByteToSize(

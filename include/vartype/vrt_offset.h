@@ -16,7 +16,7 @@ typedef struct VRToffset {
 } VRToffset;
 
 
-#ifndef VRT_OFFSET_NOFUNC
+#ifdef VRT_OFFSET_NOFUNC
 #include <vartype/export_vartype.h>
 
 VRTresult VARTYPE_EXPORT VRToffset_Alloc(

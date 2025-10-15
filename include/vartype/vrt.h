@@ -20,7 +20,7 @@ typedef struct VRTvar {
 } VRTvar;
 
 
-#ifndef VRT_NOFUNC
+#ifdef VRT_NOFUNC
 #include <vartype/export_vartype.h>
 
 VRTresult VARTYPE_EXPORT VRT_Init();

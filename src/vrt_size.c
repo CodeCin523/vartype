@@ -18,21 +18,42 @@
         return VRT_RESULT_INVALID_STATE;    \
 }
 
-#define fVRTsize_S2B(s, b) b = 1 << (s & mVRTsize_DATA)
-#ifdef __GNUC__
-// 0 based
-#define fVRTsize_B2S(s, b) s = b == 0? 0 : 63 - __builtin_clzll(b)
+#ifdef _WIN64
+#define CONSTEXPR_
+static CONSTEXPR_ __forceinline int __builtin_clzll(unsigned long long x)
+{
+#ifdef CONSTEVAL_
+    if CONSTEVAL_
+    {
+        for (int i = 0; i < sizeof(x) * CHAR_BIT; ++i)
+        {
+            if (x >> (sizeof(x) * CHAR_BIT - 1 - i))
+                return i;
+        }
+        return sizeof(x) * CHAR_BIT;
+    }
+#endif
+#if defined(_M_ARM) || defined(_M_ARM64) || defined(_M_HYBRID_X86_ARM64) || defined(_M_ARM64EC)
+    return (int)_CountLeadingZeros64(x);
+#elif defined(_WIN64)
+#if defined(__AVX2__) || defined(__LZCNT__)
+    return (int)_lzcnt_u64(x);
 #else
-// 0 based
-#define fVRTsize_B2S(s, b) {                                \
-    if (b & 0xFFFFFFFF00000000ULL) { b >>= 32; s += 32; }   \
-    if (b & 0xFFFF0000ULL) { b >>= 16; s += 16; }           \
-    if (b & 0xFF00U) { b >>= 8; s += 8; }                   \
-    if (b & 0xF0U) { b >>= 4; s += 4; }                     \
-    if (b & 0x0CU) { b >>= 2; s += 2; }                     \
-    if (b & 0x02U) { b += 1; }                              \
+    unsigned long r;
+    _BitScanReverse64(&r, x);
+    return (int)(r ^ 63);
+#endif
+#else
+    int l = __builtin_clz((unsigned)x) + 32;
+    int h = __builtin_clz((unsigned)(x >> 32));
+    return !!((unsigned)(x >> 32)) ? h : l;
+#endif
 }
 #endif
+
+#define fVRTsize_S2B(s, b) b = 1 << (s & mVRTsize_DATA)
+// 0 based
+#define fVRTsize_B2S(s, b) s = b == 0? 0 : 63 - __builtin_clzll(b)
 
 
 VRTresult VRT_ByteToSize(

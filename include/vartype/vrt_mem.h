@@ -17,8 +17,12 @@ typedef struct VRTmem {
 } VRTmem;
 
 
-#ifndef VRT_MEM_NOFUNC
+#ifdef VRT_MEM_NOFUNC
 #include <vartype/export_vartype.h>
+
+VRTresult VARTYPE_EXPORT VRTmem_Init(
+    VRTmem *mem
+);
 
 VRTresult VARTYPE_EXPORT VRTmem_Alloc(
     VRTmem *mem,
