@@ -87,5 +87,21 @@ VRTresult VRTmem_Free(
     void *addr
 ) {
     // EARLY RETURNS
+    if(addr == NULL)
+        return VRT_RESULT_INVALID_STATE;
+    fVRTmem_RETURN(mem);
+
     // IMPLEMENTATION
+    size_t offsetAddr = 0xFFFFFFFF;
+    for(int i = 0; i < mem->length; ++i) {
+        size_t off = (size_t)mem->pMem[i] - (size_t)addr;
+        if(off >= 0 && off < mVRTmem_MAP_BYTE) {
+            offsetAddr = off + i * mVRTmem_MAP_BYTE;
+            break;
+        }
+    }
+    if(offsetAddr == 0xFFFFFFFF)
+        return VRT_RESULT_FAILED;
+    
+    return VRToffset_Free(&mem->offset, offsetAddr);
 }
